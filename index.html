@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Weekly Secret</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #fdecf0;
+    --card: #ffffff;
+    --pill: #f2777e;
+    --pill-text: #ffffff;
+    --frame: #fcd3dc;
+    --cream: #f7dfae;
+    --ink: #5c4a46;
+    --ink-soft: #8a7570;
+    --lucky: #7fae7c;
+    --unlucky: #d4726f;
+    --mark-x: #b9aca8;
+    --mark-f: #d4726f;
+    --mark-d: #7fae7c;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html{ scroll-padding-top: env(safe-area-inset-top, 0px); height: 100%; }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    min-height: 100%;
+    background: var(--bg);
+    background-image:
+      linear-gradient(rgba(242,119,126,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(242,119,126,0.06) 1px, transparent 1px);
+    background-size: 34px 34px;
+    font-family: 'Quicksand', sans-serif;
+    color: var(--ink);
+    display:flex;
+    justify-content:center;
+    padding: 32px 18px 48px;
+  }
+  .app{
+    width:100%;
+    max-width: 480px;
+  }
+  .flower{ position:absolute; font-size: 26px; filter: saturate(1.1); opacity:0.9; user-select:none; pointer-events:none; }
+
+  header{ text-align:center; position:relative; margin-bottom: 6px; }
+  h1{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 3.1rem;
+    color:#5c4038;
+    margin: 0;
+    line-height: 1;
+  }
+  .subtitle{
+    font-family:'Caveat', cursive;
+    font-size: 1.3rem;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .daybar{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin: 22px 0 20px;
+  }
+  .day-btn{
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size: 0.95rem;
+    border:none;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--pill);
+    border: 2px solid var(--frame);
+    cursor:pointer;
+    transition: transform .15s ease, background .15s ease, color .15s ease;
+  }
+  .day-btn:hover{ transform: translateY(-1px); }
+  .day-btn.active{
+    background: var(--pill);
+    color: #fff;
+    border-color: var(--pill);
+  }
+
+  .panel{
+    background: var(--frame);
+    border-radius: 26px;
+    padding: 6px;
+    margin-bottom: 18px;
+  }
+  .panel-inner{
+    background: var(--card);
+    border-radius: 20px;
+    padding: 26px 22px;
+    text-align:center;
+  }
+  .empty-state{
+    color: var(--ink-soft);
+    font-size: 1rem;
+    padding: 20px 6px;
+  }
+
+  .status-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .status-badge{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 2.2rem;
+    padding: 2px 22px 6px;
+    border-radius: 999px;
+    color: #fff;
+    transition: background .25s ease;
+  }
+  .status-badge.lucky{ background: var(--lucky); }
+  .status-badge.unlucky{ background: var(--unlucky); }
+
+  .numbers{
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .num-chip{
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: #fff5f6;
+    border: 2px solid var(--frame);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700;
+    font-size: 1.15rem;
+    color: var(--ink);
+  }
+  .num-chip.hero{
+    background: var(--pill);
+    color:#fff;
+    border-color: var(--pill);
+  }
+
+  .hint{
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+
+  .reroll{
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size: 0.95rem;
+    background: #fff;
+    color: var(--pill);
+    border: 2px solid var(--pill);
+    border-radius: 999px;
+    padding: 9px 20px;
+    cursor:pointer;
+    transition: background .15s ease, color .15s ease, transform .15s ease;
+  }
+  .reroll:hover{ background: var(--pill); color:#fff; transform: translateY(-1px); }
+  .reroll:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .challenge-title, .calendar-title{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 1.7rem;
+    text-align:center;
+    color:#5c4038;
+    margin: 4px 0 10px;
+  }
+  .challenge-list{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+  }
+  .challenge-row{
+    display:flex;
+    align-items:baseline;
+    gap: 12px;
+    padding: 7px 4px;
+    border-bottom: 1px dashed var(--frame);
+    transition: font-size .2s ease, color .2s ease;
+  }
+  .challenge-row:last-child{ border-bottom:none; }
+  .c-num{
+    font-weight:700;
+    color: var(--pill);
+    width: 20px;
+    flex-shrink:0;
+    font-size: 0.95rem;
+  }
+  .c-label{ font-weight: 600; }
+  .challenge-row.up{ font-size: 1.35rem; }
+  .challenge-row.up .c-num{ color: var(--lucky); }
+  .challenge-row.down{ font-size: 0.78rem; opacity:0.7; }
+
+  /* Calendar */
+  .cal-header{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin-bottom: 12px;
+  }
+  .cal-nav{
+    background:none;
+    border:none;
+    font-size: 1.2rem;
+    color: var(--pill);
+    cursor:pointer;
+    padding: 2px 8px;
+    border-radius: 8px;
+  }
+  .cal-nav:hover{ background: #fdecef; }
+  .cal-month{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 1.4rem;
+    color:#5c4038;
+    min-width: 150px;
+    text-align:center;
+  }
+  .cal-grid{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+  }
+  .cal-dow{
+    text-align:center;
+    font-size: 0.7rem;
+    font-weight:700;
+    color: var(--ink-soft);
+    padding-bottom: 4px;
+  }
+  .cal-cell{
+    aspect-ratio: 1;
+    border-radius: 10px;
+    border: 2px solid var(--frame);
+    background: #fff9fa;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    position:relative;
+    font-weight:600;
+    font-size: 0.85rem;
+    transition: background .15s ease, border-color .15s ease;
+    padding: 2px;
+    overflow:hidden;
+  }
+  .cal-cell.empty{ visibility:hidden; cursor:default; }
+  .cal-cell.today{ border-color: var(--pill); }
+  .cal-cell .mark{
+    display:block;
+    width:100%;
+    text-align:center;
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 1.1rem;
+    line-height:1;
+    height: 1.1rem;
+  }
+  .cal-cell[data-mark="X"]{ background:#f3f0ef; }
+  .cal-cell[data-mark="X"] .mark{ color: var(--mark-x); }
+  .cal-cell[data-mark="F"]{ background:#fbe9e8; }
+  .cal-cell[data-mark="F"] .mark{ color: var(--mark-f); }
+  .cal-cell[data-mark="D"]{ background:#eaf3e8; }
+  .cal-cell[data-mark="D"] .mark{ color: var(--mark-d); }
+
+  .cal-day-num{ font-size: 0.75rem; color: var(--ink); line-height:1.3; }
+
+  .cal-legend{
+    display:flex;
+    justify-content:center;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+  }
+  .cal-legend span b{ color: var(--ink); }
+  .legend-d{ color: var(--mark-d); }
+  .legend-f{ color: var(--mark-f); }
+  .legend-x{ color: var(--mark-x); }
+
+  /* Counter */
+  .counter-wrap{
+    text-align:center;
+  }
+  .counter-badge{
+    display:inline-block;
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 2.6rem;
+    line-height:1;
+    padding: 6px 28px 10px;
+    border-radius: 999px;
+    color:#fff;
+    background: var(--pill);
+    transition: background .25s ease;
+  }
+  .counter-badge.up{ background: var(--lucky); }
+  .counter-badge.down{ background: var(--unlucky); }
+  .counter-label{
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-top: 8px;
+  }
+
+  .counter-done-title{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 2.2rem;
+    color:#5c4038;
+  }
+  .counter-done-sub{
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin: 4px 0 16px;
+  }
+  .counter-done input[type="range"]{
+    width: 100%;
+    accent-color: var(--pill);
+    margin-bottom: 8px;
+  }
+  .counter-done-value{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 1.4rem;
+    color: var(--pill);
+    margin-bottom: 16px;
+  }
+
+  .cal-challenge-panel{
+    margin-top: 14px;
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+  }
+  .cal-challenge-item{
+    background: #fdeaec;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    display:flex;
+    justify-content:space-between;
+    gap: 10px;
+  }
+  .cal-challenge-item b{ color: #5c4038; }
+  .cal-challenge-empty{
+    text-align:center;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    padding: 4px 0;
+  }
+
+  footer{
+    text-align:center;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#241b1c;
+      --card:#2f2426;
+      --frame:#4a3438;
+      --ink:#f1e4e2;
+      --ink-soft:#c3aba6;
+      --cream:#5a4a34;
+    }
+    body{ background-image:
+      linear-gradient(rgba(242,119,126,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(242,119,126,0.08) 1px, transparent 1px);
+    }
+    .num-chip{ background:#3a2b2d; }
+    .cal-cell{ background:#2f2426; }
+    .cal-cell[data-mark="X"]{ background:#332a29; }
+    .cal-cell[data-mark="F"]{ background:#3d2a29; }
+    .cal-cell[data-mark="D"]{ background:#2a3a2c; }
+    .counter-badge{ background: var(--pill); }
+    .cal-challenge-item{ background:#3a2528; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <span class="flower" style="left:-6px; top:-6px;">🌸</span>
+    <h1>Weekly Secret</h1>
+    <div class="subtitle">Bist du heute lucky?</div>
+  </header>
+
+  <div class="daybar" id="daybar"></div>
+
+  <div class="panel">
+    <div class="panel-inner" id="resultPanel">
+      <div class="empty-state">Wähle oben deinen Tag, um die heutigen Zahlen zu ziehen ✨</div>
+    </div>
+  </div>
+
+  <div class="panel" id="challengePanel" style="display:none;">
+    <div class="panel-inner">
+      <div class="challenge-title">Die Challenge</div>
+      <div class="challenge-list" id="challengeList"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-inner">
+      <div class="calendar-title">Kalender</div>
+      <div class="cal-header">
+        <button class="cal-nav" id="calPrev">‹</button>
+        <div class="cal-month" id="calMonthLabel"></div>
+        <button class="cal-nav" id="calNext">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span><b class="legend-d">D</b> Done</span>
+        <span><b class="legend-f">F</b> Fail</span>
+        <span><b class="legend-x">X</b> nicht möglich</span>
+      </div>
+      <div class="cal-challenge-panel" id="calChallengePanel"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-inner">
+      <div class="calendar-title">Zähler</div>
+      <div class="counter-wrap" id="counterWrap">
+        <span class="counter-badge" id="counterValue">15</span>
+        <div class="counter-label">Tage</div>
+      </div>
+      <div class="counter-done" id="counterDone" style="display:none;">
+        <div class="counter-done-title">Geschafft! 🎉</div>
+        <div class="counter-done-sub">Wie viele Tage soll die neue Challenge haben?</div>
+        <input type="range" id="newChallengeDays" min="5" max="30" value="15">
+        <div class="counter-done-value" id="newChallengeDaysLabel">15 Tage</div>
+        <button class="reroll" id="startNewChallengeBtn">Neue Challenge starten</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>Dein Stand wird auf diesem Gerät gespeichert.</footer>
+</div>
+
+<script>
+  const DAYS = [
+    { key: "Mon", label: "Mo", jsIdx: 1 },
+    { key: "Tue", label: "Di", jsIdx: 2 },
+    { key: "Wed", label: "Mi", jsIdx: 3 },
+    { key: "Thu", label: "Do", jsIdx: 4 },
+    { key: "Fri", label: "Fr", jsIdx: 5 },
+    { key: "Sat", label: "Sa", jsIdx: 6 },
+    { key: "Sun", label: "So", jsIdx: 0 },
+  ];
+
+  const CHALLENGE_TYPES = [
+    "Normal",
+    "String-Tanga",
+    "String Tanga unter",
+    "Dessous + String",
+    "Dessous + String + Knee Highs",
+  ];
+  const CHALLENGE_SLOTS = 7; // numbers 0–6
+
+  const DAY_BY_JSIDX = {};
+  DAYS.forEach(d => { DAY_BY_JSIDX[d.jsIdx] = d; });
+
+  let currentDay = null;
+  const dayStates = {}; // key -> { luckyPair, n1, isLucky, n2, n3, challenge: [...] }
+
+  function randNum(){ return Math.floor(Math.random() * 7); } // 0–6
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function pickLuckyPair(){
+    let a = randNum(), b = randNum();
+    while (b === a) b = randNum();
+    return [a, b];
+  }
+
+  function randomChallengeSet(){
+    // Each of the 7 slots gets an independently random type, so counts
+    // per type vary every time: some show up more often, some less, some not at all.
+    const out = [];
+    for (let i = 0; i < CHALLENGE_SLOTS; i++){
+      out.push(CHALLENGE_TYPES[Math.floor(Math.random() * CHALLENGE_TYPES.length)]);
+    }
+    return out;
+  }
+
+  function generateState(keepLuckyPair){
+    const luckyPair = keepLuckyPair || pickLuckyPair();
+    const n1 = randNum();
+    const n2 = randNum();
+    let n3 = randNum();
+    const hasDouble = (n1 === n2) || (n1 === n3) || (n2 === n3);
+    const isLucky = hasDouble ? false : luckyPair.includes(n1);
+    return {
+      luckyPair,
+      n1,
+      n2,
+      n3,
+      hasDouble,
+      isLucky,
+      challenge: randomChallengeSet(),
+    };
+  }
+
+  function upIndex(state){ return state.challenge.length ? state.n2 : -1; }
+  function downIndex(state){ return state.n3; }
+
+  // ---- Day tabs & results ----
+  const daybar = document.getElementById("daybar");
+  DAYS.forEach(d => {
+    const btn = document.createElement("button");
+    btn.className = "day-btn";
+    btn.textContent = d.label;
+    btn.dataset.key = d.key;
+    btn.addEventListener("click", () => loadDay(d.key));
+    daybar.appendChild(btn);
+  });
+
+  function loadDay(key){
+    currentDay = key;
+    dayStates[key] = generateState();
+    document.querySelectorAll(".day-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.key === key);
+    });
+    document.getElementById("challengePanel").style.display = "block";
+    renderCurrentDay();
+    renderCalendar();
+    saveState();
+  }
+
+  function reroll(){
+    if (!currentDay) return;
+    const keepLuckyPair = dayStates[currentDay] ? dayStates[currentDay].luckyPair : null;
+    dayStates[currentDay] = generateState(keepLuckyPair);
+    renderCurrentDay();
+    renderCalendar();
+    saveState();
+  }
+
+  function renderCurrentDay(){
+    const day = DAYS.find(d => d.key === currentDay);
+    const state = dayStates[currentDay];
+    renderResult(day, state);
+    renderChallenge(state);
+  }
+
+  function renderResult(day, state){
+    const panel = document.getElementById("resultPanel");
+    const isLucky = state.isLucky;
+    panel.innerHTML = `
+      <div class="status-row">
+        <span class="status-badge ${isLucky ? "lucky" : "unlucky"}">${isLucky ? "Lucky" : "Unlucky"}</span>
+      </div>
+      <div class="numbers">
+        <div class="num-chip hero">${state.n1}</div>
+        <div class="num-chip">${state.n2}</div>
+        <div class="num-chip">${state.n3}</div>
+      </div>
+      <div class="hint">${state.hasDouble
+        ? "Zwei Zahlen sind gleich → automatisch unlucky"
+        : `Lucky-Zahlen für ${day.label}: ${state.luckyPair.join(" & ")} · alle anderen sind unlucky`}</div>
+      <button class="reroll" id="rerollBtn">Neu würfeln</button>
+    `;
+    document.getElementById("rerollBtn").addEventListener("click", reroll);
+  }
+
+  function renderChallenge(state){
+    const list = document.getElementById("challengeList");
+    list.innerHTML = "";
+
+    if (state.isLucky){
+      list.innerHTML = `<div class="empty-state">Keine Challenge heute</div>`;
+      return;
+    }
+
+    const up = upIndex(state);
+    const down = downIndex(state);
+    state.challenge.forEach((label, i) => {
+      const row = document.createElement("div");
+      row.className = "challenge-row";
+      if (i === up) row.classList.add("up");
+      else if (i === down) row.classList.add("down");
+      row.innerHTML = `<span class="c-num">${i}</span><span class="c-label">${label}</span>`;
+      list.appendChild(row);
+    });
+  }
+
+  // ---- Calendar ----
+  const calMarks = {}; // "YYYY-MM-DD" -> "X" | "F" | "D"
+  const MARK_CYCLE = ["", "X", "F", "D"];
+  const MONTH_NAMES = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  const DOW_LABELS = ["Mo","Di","Mi","Do","Fr","Sa","So"];
+
+  const today = new Date();
+  let calYear = today.getFullYear();
+  let calMonth = today.getMonth(); // 0-indexed
+
+  document.getElementById("calPrev").addEventListener("click", () => {
+    calMonth--;
+    if (calMonth < 0){ calMonth = 11; calYear--; }
+    renderCalendar();
+  });
+  document.getElementById("calNext").addEventListener("click", () => {
+    calMonth++;
+    if (calMonth > 11){ calMonth = 0; calYear++; }
+    renderCalendar();
+  });
+
+  function dateKey(y, m, d){
+    return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+  }
+
+  function cycleMark(key){
+    const current = calMarks[key] || "";
+    const idx = MARK_CYCLE.indexOf(current);
+    const next = MARK_CYCLE[(idx + 1) % MARK_CYCLE.length];
+    if (next === "") delete calMarks[key];
+    else calMarks[key] = next;
+    renderCalendar();
+    saveState();
+  }
+
+  function challengeSummaryForState(state){
+    if (!state) return null;
+    if (state.isLucky) return "Keine Challenge heute";
+    const up = upIndex(state);
+    return state.challenge[up];
+  }
+
+  // ---- Zähler (counter) ----
+  let COUNTER_START = 15;
+
+  function dayIndexFromKey(key){
+    // Days since epoch, for consecutive-day comparisons
+    const [y, m, d] = key.split("-").map(Number);
+    return Math.round(Date.UTC(y, m - 1, d) / 86400000);
+  }
+
+  function streakContribution(keys, baseAmount, boostAmount){
+    const sorted = keys.slice().sort();
+    let total = 0;
+    let streakPos = 0;
+    let prevIdx = null;
+    sorted.forEach(key => {
+      const idx = dayIndexFromKey(key);
+      streakPos = (prevIdx !== null && idx === prevIdx + 1) ? streakPos + 1 : 1;
+      total += (streakPos <= 3) ? baseAmount : boostAmount;
+      prevIdx = idx;
+    });
+    return total;
+  }
+
+  function computeCounter(){
+    const dKeys = Object.keys(calMarks).filter(k => calMarks[k] === "D");
+    const fKeys = Object.keys(calMarks).filter(k => calMarks[k] === "F");
+    // D: -1 per day, -2 per day once more than 3 D-days in a row
+    const dContribution = streakContribution(dKeys, -1, -2);
+    // F: +1 per day, +2 per day once more than 3 F-days in a row
+    const fContribution = streakContribution(fKeys, 1, 2);
+    return COUNTER_START + dContribution + fContribution;
+  }
+
+  const newChallengeDaysInput = document.getElementById("newChallengeDays");
+  const newChallengeDaysLabel = document.getElementById("newChallengeDaysLabel");
+  newChallengeDaysInput.addEventListener("input", () => {
+    newChallengeDaysLabel.textContent = `${newChallengeDaysInput.value} Tage`;
+  });
+  document.getElementById("startNewChallengeBtn").addEventListener("click", () => {
+    COUNTER_START = Number(newChallengeDaysInput.value);
+    Object.keys(calMarks).forEach(k => delete calMarks[k]);
+    renderCalendar();
+    saveState();
+  });
+
+  function renderCounter(){
+    const value = computeCounter();
+    const wrap = document.getElementById("counterWrap");
+    const done = document.getElementById("counterDone");
+    if (value <= 0){
+      wrap.style.display = "none";
+      done.style.display = "block";
+      return;
+    }
+    wrap.style.display = "block";
+    done.style.display = "none";
+    const badge = document.getElementById("counterValue");
+    badge.textContent = value;
+    badge.classList.remove("up", "down");
+    if (value > COUNTER_START) badge.classList.add("up");
+    else if (value < COUNTER_START) badge.classList.add("down");
+  }
+
+  function renderCalendar(){
+    document.getElementById("calMonthLabel").textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+    const grid = document.getElementById("calGrid");
+    grid.innerHTML = "";
+
+    DOW_LABELS.forEach(l => {
+      const el = document.createElement("div");
+      el.className = "cal-dow";
+      el.textContent = l;
+      grid.appendChild(el);
+    });
+
+    const firstOfMonth = new Date(calYear, calMonth, 1);
+    // Monday-first offset: JS getDay() 0=Sun..6=Sat -> convert to 0=Mon..6=Sun
+    const firstJsDow = firstOfMonth.getDay();
+    const leadingBlanks = (firstJsDow + 6) % 7;
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+    for (let i = 0; i < leadingBlanks; i++){
+      const blank = document.createElement("div");
+      blank.className = "cal-cell empty";
+      grid.appendChild(blank);
+    }
+
+    const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+    for (let d = 1; d <= daysInMonth; d++){
+      const key = dateKey(calYear, calMonth, d);
+      const cell = document.createElement("div");
+      cell.className = "cal-cell";
+      if (key === todayKey) cell.classList.add("today");
+      const mark = calMarks[key] || "";
+      if (mark) cell.dataset.mark = mark;
+      cell.innerHTML = `<span class="cal-day-num">${d}</span><span class="mark">${mark}</span>`;
+      cell.addEventListener("click", () => cycleMark(key));
+      grid.appendChild(cell);
+    }
+
+    renderCalChallengeList();
+    renderCounter();
+  }
+
+  function renderCalChallengeList(){
+    const panel = document.getElementById("calChallengePanel");
+    panel.innerHTML = "";
+    const dEntries = Object.keys(calMarks)
+      .filter(k => calMarks[k] === "D")
+      .filter(k => k.startsWith(`${calYear}-${String(calMonth+1).padStart(2,"0")}`))
+      .sort();
+
+    if (dEntries.length === 0){
+      panel.innerHTML = `<div class="cal-challenge-empty">Markiere einen Tag mit D, um seine Challenge zu sehen.</div>`;
+      return;
+    }
+
+    dEntries.forEach(key => {
+      const [y, m, d] = key.split("-").map(Number);
+      const jsDow = new Date(y, m - 1, d).getDay();
+      const dayDef = DAY_BY_JSIDX[jsDow];
+      const state = dayStates[dayDef.key];
+      const item = document.createElement("div");
+      item.className = "cal-challenge-item";
+      const dateLabel = `${d}. ${MONTH_NAMES[m-1].slice(0,3)}`;
+      const challengeLabel = challengeSummaryForState(state);
+      item.innerHTML = `<span>${dateLabel} <b>(${dayDef.label})</b></span><span>${challengeLabel ? "<b>" + challengeLabel + "</b>" : "noch nicht geladen"}</span>`;
+      panel.appendChild(item);
+    });
+  }
+
+  // ---- Persistence (this browser / this device only) ----
+  const STORAGE_KEY = "weeklySecret_v1";
+
+  function saveState(){
+    try{
+      const payload = { dayStates, currentDay, calMarks, counterStart: COUNTER_START };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e){
+      // storage unavailable (private mode, quota, etc.) — app still works, just won't persist
+      console.warn("Konnte nicht speichern:", e);
+    }
+  }
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e){
+      console.warn("Konnte gespeicherten Stand nicht laden:", e);
+      return null;
+    }
+  }
+
+  // initial state: restore from this device if available, otherwise
+  // pre-generate all days so calendar D-marks have something to show
+  const saved = loadState();
+  DAYS.forEach(d => {
+    dayStates[d.key] = (saved && saved.dayStates && saved.dayStates[d.key]) || generateState();
+  });
+  if (saved && saved.calMarks) Object.assign(calMarks, saved.calMarks);
+  if (saved && typeof saved.counterStart === "number"){
+    COUNTER_START = saved.counterStart;
+    newChallengeDaysInput.value = COUNTER_START;
+    newChallengeDaysLabel.textContent = `${COUNTER_START} Tage`;
+  }
+
+  if (saved && saved.currentDay && dayStates[saved.currentDay]){
+    currentDay = saved.currentDay;
+    document.querySelectorAll(".day-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.key === currentDay);
+    });
+    document.getElementById("challengePanel").style.display = "block";
+    renderCurrentDay();
+  }
+
+  renderCalendar();
+  saveState();
+</script>
+</body>
+</html>
