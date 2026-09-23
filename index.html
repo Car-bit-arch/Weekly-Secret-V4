@@ -229,6 +229,40 @@
   .challenge-row.up .c-num{ color: var(--lucky); }
   .challenge-row.down{ font-size: 0.78rem; opacity:0.7; }
 
+  .flow-big-value{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: var(--fs-display);
+    color: var(--heading);
+    margin: 4px 0 4px;
+  }
+  .flow-sub{
+    font-size: var(--fs-text);
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  .mark-btn-row{
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .mark-btn{
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size: var(--fs-text);
+    border:none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    cursor:pointer;
+    color:#fff;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+  .mark-btn:hover{ transform: translateY(-1px); }
+  .mark-btn.mark-done{ background: var(--mark-d); }
+  .mark-btn.mark-fail{ background: var(--mark-f); }
+  .mark-btn.mark-x{ background: var(--mark-x); }
+
   /* Calendar */
   .cal-header{
     display:flex;
@@ -276,7 +310,7 @@
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    cursor:pointer;
+    cursor:default;
     position:relative;
     font-weight:600;
     font-size: var(--fs-text);
@@ -615,24 +649,24 @@
     </header>
     <div class="mode-select-list" id="modeSelectList">
       <button type="button" class="mode-select-btn" data-mode="b1">
-        <span class="mode-select-emoji">🛠️</span>
+        <span class="mode-select-emoji">👅</span>
         <span class="mode-select-text">
-          <span class="mode-select-title">In Bearbeitung 1</span>
-          <span class="mode-select-desc">Testmodus, gleiches Overlay wie Weekly Secret</span>
+          <span class="mode-select-title">Oral Training</span>
+          <span class="mode-select-desc">Take it deep!</span>
         </span>
       </button>
       <button type="button" class="mode-select-btn" data-mode="weekly">
-        <span class="mode-select-emoji">🌸</span>
+        <span class="mode-select-emoji">🩲</span>
         <span class="mode-select-text">
           <span class="mode-select-title">Weekly Secret</span>
-          <span class="mode-select-desc">Bist du heute lucky?</span>
+          <span class="mode-select-desc">Are you lucky today?</span>
         </span>
       </button>
       <button type="button" class="mode-select-btn" data-mode="b2">
-        <span class="mode-select-emoji">🧩</span>
+        <span class="mode-select-emoji">🍑</span>
         <span class="mode-select-text">
-          <span class="mode-select-title">In Bearbeitung 2</span>
-          <span class="mode-select-desc">Demnächst verfügbar</span>
+          <span class="mode-select-title">Anal Training</span>
+          <span class="mode-select-desc">There's always more space!</span>
         </span>
       </button>
     </div>
@@ -689,6 +723,30 @@
     <div class="panel-inner">
       <div class="challenge-title">Die Challenge</div>
       <div class="challenge-list" id="challengeList"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="challengeFlowPanel" style="display:none;">
+    <div class="panel-inner">
+      <div id="challengeCountBlock" hidden>
+        <div class="challenge-title">Anzahl</div>
+        <div class="flow-big-value" id="countValue">0</div>
+        <div class="flow-sub">Mal</div>
+        <button class="reroll" id="confirmCountBtn">Geschafft – weiter</button>
+      </div>
+      <div id="challengeTimerBlock" hidden>
+        <div class="challenge-title">Timer</div>
+        <div class="flow-big-value" id="timerValue">00:00</div>
+        <button class="reroll" id="startTimerBtn">Timer starten</button>
+      </div>
+      <div id="challengeDoneBlock" hidden>
+        <div class="challenge-title">Wie lief's?</div>
+        <div class="mark-btn-row">
+          <button class="mark-btn mark-done" type="button" data-mark="D">Done</button>
+          <button class="mark-btn mark-fail" type="button" data-mark="F">Fail</button>
+          <button class="mark-btn mark-x" type="button" data-mark="X">X</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -752,13 +810,62 @@
     { key: "Sun", label: "So", jsIdx: 0 },
   ];
 
-  const CHALLENGE_TYPES = [
+  // Weekly Secret hat weiterhin eine einfache Liste (keine Kategorien).
+  const CHALLENGES_WEEKLY = [
     "Normal",
     "String-Tanga",
     "String Tanga unter",
     "Dessous + String",
     "Dessous + String + Knee Highs",
   ];
+
+  // Oral & Anal Training: Challenges sind in Kategorien organisiert.
+  // "count"  -> Zahlengenerator (Anzahl "Mal")
+  // "timer" / "Wearable_Timer" -> Countdown-Timer
+  // Beim Auswählen wird zuerst zufällig eine Kategorie, dann ein Eintrag
+  // daraus gewählt. Einfach hier im Code Einträge ergänzen/entfernen.
+  const CHALLENGES_B1 = { // Oral Training
+    count: {
+      min: 1, max: 50,
+      items: [
+        "Slow and deep",
+        "Slow and shallow",
+        "Fast and shallow",
+        "Fast and deep",
+        "Force into throat",
+        "Deepthroat",
+      ],
+    },
+    timer: {
+      minSeconds: 10, maxSeconds: 300, // 10 Sekunden – 5 Minuten
+      items: [
+        "Lick only the tip",
+        "Lick the dildo all over",
+        "Suck the tip of the dildo while stroking it",
+        "Deepthroat at 100 bpm",
+      ],
+    },
+  };
+  const CHALLENGES_B2 = { // Anal Training
+    count: {
+      min: 15, max: 120,
+      items: [
+        "Platzhalter (Anzahl) – hier eigene Challenge eintragen",
+      ],
+    },
+    timer: {
+      minSeconds: 30, maxSeconds: 600, // 30 Sekunden – 10 Minuten
+      items: [
+        "Platzhalter (Timer) – hier eigene Challenge eintragen",
+      ],
+    },
+    Wearable_Timer: {
+      minSeconds: 600, maxSeconds: 14400, // 10 Minuten – 4 Stunden
+      items: [
+        "Platzhalter (Wearable Timer) – hier eigene Challenge eintragen",
+      ],
+    },
+  };
   const CHALLENGE_SLOTS = 7; // numbers 0–6
 
   const DAY_BY_JSIDX = {};
@@ -784,12 +891,61 @@
     return [a, b];
   }
 
+  function randomInt(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // Schrittweite für die Zufalls-Generierung der Timer-Dauer: je größer der
+  // maximale Bereich, desto größer die Schritte (keine Sekundensprünge bei
+  // langen Timern wie dem Wearable_Timer).
+  function timerStepSeconds(maxSeconds){
+    if (maxSeconds <= 300) return 5;     // bis 5 Min: 5-Sekunden-Schritte
+    if (maxSeconds <= 600) return 10;    // bis 10 Min: 10-Sekunden-Schritte
+    if (maxSeconds <= 3600) return 30;   // bis 1 Std: 30-Sekunden-Schritte
+    return 300;                           // darüber: 5-Minuten-Schritte
+  }
+
+  function randomTimerSeconds(minSeconds, maxSeconds){
+    const step = timerStepSeconds(maxSeconds);
+    const minSteps = Math.ceil(minSeconds / step);
+    const maxSteps = Math.floor(maxSeconds / step);
+    const span = Math.max(1, maxSteps - minSteps + 1);
+    return (minSteps + Math.floor(Math.random() * span)) * step;
+  }
+
+  // Wählt für den aktuellen Modus eine Challenge. Bei Weekly Secret eine
+  // einfache Liste, bei Oral/Anal Training erst zufällig eine Kategorie,
+  // dann einen Eintrag daraus — inkl. sofort ausgewürfelter Anzahl/Dauer.
+  function pickChallengeEntry(modeKey){
+    const mode = MODES[modeKey];
+    if (mode && mode.categories){
+      const catKeys = Object.keys(mode.categories);
+      const catKey = catKeys[Math.floor(Math.random() * catKeys.length)];
+      const cat = mode.categories[catKey];
+      const label = cat.items[Math.floor(Math.random() * cat.items.length)];
+      const entry = { label, category: catKey };
+      if (cat.min !== undefined){
+        entry.min = cat.min;
+        entry.max = cat.max;
+        entry.rolledCount = randomInt(cat.min, cat.max);
+      }
+      if (cat.minSeconds !== undefined){
+        entry.minSeconds = cat.minSeconds;
+        entry.maxSeconds = cat.maxSeconds;
+        entry.rolledSeconds = randomTimerSeconds(cat.minSeconds, cat.maxSeconds);
+      }
+      return entry;
+    }
+    const items = (mode && mode.challenges) || CHALLENGES_WEEKLY;
+    return { label: items[Math.floor(Math.random() * items.length)], category: null };
+  }
+
   function randomChallengeSet(){
     // Each of the 7 slots gets an independently random type, so counts
     // per type vary every time: some show up more often, some less, some not at all.
     const out = [];
     for (let i = 0; i < CHALLENGE_SLOTS; i++){
-      out.push(CHALLENGE_TYPES[Math.floor(Math.random() * CHALLENGE_TYPES.length)]);
+      out.push(pickChallengeEntry(currentMode));
     }
     return out;
   }
@@ -814,6 +970,18 @@
 
   function upIndex(state){ return state.challenge.length ? state.n2 : -1; }
   function downIndex(state){ return state.n3; }
+
+  // Alte gespeicherte Stände (vor der Kategorien-Umstellung) hatten
+  // state.challenge als Array aus reinen Strings. Hier auf das neue
+  // Objekt-Format { label, category, ... } heben, damit nichts bricht.
+  function normalizeDayState(state){
+    if (state && Array.isArray(state.challenge)){
+      state.challenge = state.challenge.map(entry =>
+        (typeof entry === "string") ? { label: entry, category: null } : entry
+      );
+    }
+    return state;
+  }
 
   // ---- Day tabs & results ----
   const daybar = document.getElementById("daybar");
@@ -852,6 +1020,7 @@
     const state = dayStates[currentDay];
     renderResult(day, state);
     renderChallenge(state);
+    startChallengeFlow(state);
   }
 
   function renderResult(day, state){
@@ -885,21 +1054,115 @@
 
     const up = upIndex(state);
     const down = downIndex(state);
-    state.challenge.forEach((label, i) => {
+    state.challenge.forEach((entry, i) => {
       const row = document.createElement("div");
       row.className = "challenge-row";
       if (i === up) row.classList.add("up");
       else if (i === down) row.classList.add("down");
-      row.innerHTML = `<span class="c-num">${i}</span><span class="c-label">${label}</span>`;
+      row.innerHTML = `<span class="c-num">${i}</span><span class="c-label">${entry.label}</span>`;
       list.appendChild(row);
     });
+  }
+
+  // ---- Challenge-Ablauf: Anzahl / Timer / Done-Fail-X ----
+  let activeChallengeEntry = null;
+  let timerInterval = null;
+
+  function clearChallengeTimer(){
+    if (timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function hideAllFlowBlocks(){
+    document.getElementById("challengeCountBlock").hidden = true;
+    document.getElementById("challengeTimerBlock").hidden = true;
+    document.getElementById("challengeDoneBlock").hidden = true;
+    document.getElementById("challengeFlowPanel").style.display = "none";
+  }
+
+  function formatTimer(totalSeconds){
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+    return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  }
+
+  // Sobald eine Challenge da ist (nicht lucky), erscheint darunter je nach
+  // Kategorie: Anzahl-Generator, Timer, oder direkt Done/Fail/X.
+  function startChallengeFlow(state){
+    clearChallengeTimer();
+    hideAllFlowBlocks();
+    activeChallengeEntry = null;
+    if (!state || state.isLucky) return;
+
+    const up = upIndex(state);
+    const entry = state.challenge[up];
+    if (!entry) return;
+    activeChallengeEntry = entry;
+
+    document.getElementById("challengeFlowPanel").style.display = "block";
+
+    if (entry.category !== null && entry.min !== undefined){
+      document.getElementById("countValue").textContent = entry.rolledCount;
+      document.getElementById("challengeCountBlock").hidden = false;
+    } else if (entry.category !== null && entry.minSeconds !== undefined){
+      document.getElementById("timerValue").textContent = formatTimer(entry.rolledSeconds);
+      const btn = document.getElementById("startTimerBtn");
+      btn.disabled = false;
+      btn.textContent = "Timer starten";
+      document.getElementById("challengeTimerBlock").hidden = false;
+    } else {
+      document.getElementById("challengeDoneBlock").hidden = false;
+    }
+  }
+
+  document.getElementById("confirmCountBtn").addEventListener("click", () => {
+    document.getElementById("challengeCountBlock").hidden = true;
+    document.getElementById("challengeDoneBlock").hidden = false;
+  });
+
+  document.getElementById("startTimerBtn").addEventListener("click", () => {
+    if (!activeChallengeEntry || activeChallengeEntry.rolledSeconds === undefined) return;
+    let remaining = activeChallengeEntry.rolledSeconds;
+    const btn = document.getElementById("startTimerBtn");
+    btn.disabled = true;
+    btn.textContent = "Läuft…";
+    clearChallengeTimer();
+    timerInterval = setInterval(() => {
+      remaining--;
+      if (remaining <= 0){
+        clearChallengeTimer();
+        document.getElementById("timerValue").textContent = "00:00";
+        document.getElementById("challengeTimerBlock").hidden = true;
+        document.getElementById("challengeDoneBlock").hidden = false;
+        return;
+      }
+      document.getElementById("timerValue").textContent = formatTimer(remaining);
+    }, 1000);
+  });
+
+  document.querySelectorAll("#challengeDoneBlock .mark-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      setTodayMark(btn.dataset.mark);
+      hideAllFlowBlocks();
+    });
+  });
+
+  // Markiert den heutigen Tag im Kalender des aktuellen Modus. Das ist jetzt
+  // der einzige Weg, den Kalender zu markieren — direktes Antippen der
+  // Kalenderzellen ist deaktiviert.
+  function setTodayMark(mark){
+    const key = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+    calMarks[key] = mark;
+    calChallenges[key] = challengeLabelForDateKey(key);
+    renderCalendar();
+    saveState();
   }
 
   // ---- Calendar ----
   const calMarks = {}; // "YYYY-MM-DD" -> "X" | "F" | "D"
   const calChallenges = {}; // "YYYY-MM-DD" -> eingefrorene Challenge, sobald "D" gesetzt wurde
   let calChallengesOpen = true; // Monatsliste der Challenges ein-/ausgeklappt
-  const MARK_CYCLE = ["", "X", "F", "D"];
   const MONTH_NAMES = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
   const DOW_LABELS = ["Mo","Di","Mi","Do","Fr","Sa","So"];
 
@@ -922,18 +1185,8 @@
     return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
   }
 
-  function cycleMark(key){
-    const current = calMarks[key] || "";
-    const idx = MARK_CYCLE.indexOf(current);
-    const next = MARK_CYCLE[(idx + 1) % MARK_CYCLE.length];
-    if (next === "") delete calMarks[key];
-    else calMarks[key] = next;
-    // "D": Challenge im Moment des Eintragens festhalten, damit sie sich nicht mehr ändert
-    if (next === "D") calChallenges[key] = challengeLabelForDateKey(key);
-    else delete calChallenges[key];
-    renderCalendar();
-    saveState();
-  }
+  // Kalenderzellen werden nur noch über das Done/Fail/X-Fenster markiert
+  // (siehe setTodayMark), nicht mehr per direktem Antippen.
 
   function challengeLabelForDateKey(key){
     const [y, m, d] = key.split("-").map(Number);
@@ -945,7 +1198,8 @@
     if (!state) return null;
     if (state.isLucky) return "Keine Challenge heute";
     const up = upIndex(state);
-    return state.challenge[up];
+    const entry = state.challenge[up];
+    return entry ? entry.label : null;
   }
 
   // ---- Zähler (counter) ----
@@ -1046,7 +1300,6 @@
       const mark = calMarks[key] || "";
       if (mark) cell.dataset.mark = mark;
       cell.innerHTML = `<span class="cal-day-num">${d}</span><span class="mark">${mark}</span>`;
-      cell.addEventListener("click", () => cycleMark(key));
       grid.appendChild(cell);
     }
 
@@ -1101,9 +1354,9 @@
   // ---- Persistence (this browser / this device only) ----
   // Jeder Modus wird komplett unabhängig unter seinem eigenen Key gespeichert.
   const MODES = {
-    weekly: { label: "Weekly Secret",     storageKey: "weeklySecret_v1",    abbr: "WS", subtitle: "Bist du heute lucky?" },
-    b1:     { label: "In Bearbeitung 1",  storageKey: "weeklySecret_v1_b1", abbr: "B1", subtitle: "Testmodus, gleiches Overlay wie Weekly Secret" },
-    b2:     { label: "In Bearbeitung 2",  storageKey: "weeklySecret_v1_b2", abbr: "B2", subtitle: "Demnächst verfügbar" },
+    weekly: { label: "Weekly Secret",  storageKey: "weeklySecret_v1",    abbr: "WS", subtitle: "Bist du heute lucky?", challenges: CHALLENGES_WEEKLY },
+    b1:     { label: "Oral Training",  storageKey: "weeklySecret_v1_b1", abbr: "OT", subtitle: "MMMPHH", categories: CHALLENGES_B1 },
+    b2:     { label: "Anal Training",  storageKey: "weeklySecret_v1_b2", abbr: "AT", subtitle: "Train hard", categories: CHALLENGES_B2 },
   };
   let currentMode = null;
   let currentStorageKey = MODES.weekly.storageKey;
@@ -1148,7 +1401,7 @@
     resetModeState();
     const saved = loadStateFromKey(currentStorageKey);
     DAYS.forEach(d => {
-      dayStates[d.key] = (saved && saved.dayStates && saved.dayStates[d.key]) || generateState();
+      dayStates[d.key] = normalizeDayState((saved && saved.dayStates && saved.dayStates[d.key]) || generateState());
     });
     if (saved && saved.calMarks) Object.assign(calMarks, saved.calMarks);
     if (saved && saved.calChallenges) Object.assign(calChallenges, saved.calChallenges);
@@ -1175,12 +1428,12 @@
     renderCalendar();
     saveState();
 
-    // UI umschalten: In Bearbeitung 1 & Weekly Secret teilen sich zu
-    // Testzwecken dasselbe Overlay; In Bearbeitung 2 zeigt nur einen Platzhalter.
+    // UI umschalten: Oral Training, Weekly Secret & Anal Training teilen
+    // sich alle dasselbe Overlay (Zahlengenerator, Zähler, Kalender).
     document.getElementById("appTitle").textContent = MODES[modeKey].label;
     document.getElementById("appSubtitle").textContent = MODES[modeKey].subtitle;
-    document.getElementById("weeklyUI").hidden = (modeKey === "b2");
-    document.getElementById("placeholderUI").hidden = (modeKey !== "b2");
+    document.getElementById("weeklyUI").hidden = false;
+    document.getElementById("placeholderUI").hidden = true;
     document.querySelectorAll(".mode-switch-btn").forEach(b => {
       b.classList.toggle("active", b.dataset.mode === modeKey);
     });
