@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Weekly Secret</title>
+<title>Spiele-Hub</title>
+<script>
+  (function(){
+    try{
+      var t = localStorage.getItem("weeklySecret_theme");
+      if (t === "ocean" || t === "honey") document.documentElement.setAttribute("data-palette", t);
+    } catch(e){}
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -21,6 +29,22 @@
     --mark-x: #b9aca8;
     --mark-f: #d4726f;
     --mark-d: #7fae7c;
+    --accent: #f2777e;
+    --heading: #5c4038;
+    --chip-bg: #fff5f6;
+    --cell-bg: #fff9fa;
+    --hover-bg: #fdecef;
+    --item-bg: #fdeaec;
+    --grid-line: rgba(242,119,126,0.06);
+    --mark-x-bg: #f3f0ef;
+    --mark-f-bg: #fbe9e8;
+    --mark-d-bg: #eaf3e8;
+    /* einheitliche Schriftgrößen */
+    --fs-title: 3.1rem;
+    --fs-display: 2.2rem;
+    --fs-heading: 1.7rem;
+    --fs-sub: 1.3rem;
+    --fs-text: 0.9rem;
     box-sizing: border-box;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -32,10 +56,11 @@
     min-height: 100%;
     background: var(--bg);
     background-image:
-      linear-gradient(rgba(242,119,126,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(242,119,126,0.06) 1px, transparent 1px);
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 34px 34px;
     font-family: 'Quicksand', sans-serif;
+    font-size: var(--fs-text);
     color: var(--ink);
     display:flex;
     justify-content:center;
@@ -51,14 +76,14 @@
   h1{
     font-family:'Caveat', cursive;
     font-weight:700;
-    font-size: 3.1rem;
-    color:#5c4038;
+    font-size: var(--fs-title);
+    color: var(--heading);
     margin: 0;
     line-height: 1;
   }
   .subtitle{
     font-family:'Caveat', cursive;
-    font-size: 1.3rem;
+    font-size: var(--fs-sub);
     color: var(--ink-soft);
     margin-top: 2px;
   }
@@ -70,23 +95,23 @@
     flex-wrap:wrap;
     margin: 22px 0 20px;
   }
-  .day-btn{
+  .day-btn, .theme-btn{
     font-family:'Quicksand', sans-serif;
     font-weight:700;
-    font-size: 0.95rem;
+    font-size: var(--fs-text);
     border:none;
     padding: 9px 16px;
     border-radius: 999px;
     background: #fff;
-    color: var(--pill);
+    color: var(--accent);
     border: 2px solid var(--frame);
     cursor:pointer;
     transition: transform .15s ease, background .15s ease, color .15s ease;
   }
-  .day-btn:hover{ transform: translateY(-1px); }
-  .day-btn.active{
+  .day-btn:hover, .theme-btn:hover{ transform: translateY(-1px); }
+  .day-btn.active, .theme-btn.active{
     background: var(--pill);
-    color: #fff;
+    color: var(--pill-text);
     border-color: var(--pill);
   }
 
@@ -104,7 +129,7 @@
   }
   .empty-state{
     color: var(--ink-soft);
-    font-size: 1rem;
+    font-size: var(--fs-text);
     padding: 20px 6px;
   }
 
@@ -118,7 +143,7 @@
   .status-badge{
     font-family:'Caveat', cursive;
     font-weight:700;
-    font-size: 2.2rem;
+    font-size: var(--fs-display);
     padding: 2px 22px 6px;
     border-radius: 999px;
     color: #fff;
@@ -136,21 +161,21 @@
   .num-chip{
     width: 42px; height: 42px;
     border-radius: 12px;
-    background: #fff5f6;
+    background: var(--chip-bg);
     border: 2px solid var(--frame);
     display:flex; align-items:center; justify-content:center;
     font-weight:700;
-    font-size: 1.15rem;
+    font-size: var(--fs-text);
     color: var(--ink);
   }
   .num-chip.hero{
     background: var(--pill);
-    color:#fff;
+    color: var(--pill-text);
     border-color: var(--pill);
   }
 
   .hint{
-    font-size: 0.85rem;
+    font-size: var(--fs-text);
     color: var(--ink-soft);
     margin-bottom: 18px;
   }
@@ -158,24 +183,24 @@
   .reroll{
     font-family:'Quicksand', sans-serif;
     font-weight:700;
-    font-size: 0.95rem;
+    font-size: var(--fs-text);
     background: #fff;
-    color: var(--pill);
+    color: var(--accent);
     border: 2px solid var(--pill);
     border-radius: 999px;
     padding: 9px 20px;
     cursor:pointer;
     transition: background .15s ease, color .15s ease, transform .15s ease;
   }
-  .reroll:hover{ background: var(--pill); color:#fff; transform: translateY(-1px); }
+  .reroll:hover{ background: var(--pill); color: var(--pill-text); transform: translateY(-1px); }
   .reroll:disabled{ opacity:0.4; cursor:not-allowed; }
 
   .challenge-title, .calendar-title{
     font-family:'Caveat', cursive;
     font-weight:700;
-    font-size: 1.7rem;
+    font-size: var(--fs-heading);
     text-align:center;
-    color:#5c4038;
+    color: var(--heading);
     margin: 4px 0 10px;
   }
   .challenge-list{
@@ -194,10 +219,10 @@
   .challenge-row:last-child{ border-bottom:none; }
   .c-num{
     font-weight:700;
-    color: var(--pill);
+    color: var(--accent);
     width: 20px;
     flex-shrink:0;
-    font-size: 0.95rem;
+    font-size: var(--fs-text);
   }
   .c-label{ font-weight: 600; }
   .challenge-row.up{ font-size: 1.35rem; }
@@ -215,18 +240,18 @@
   .cal-nav{
     background:none;
     border:none;
-    font-size: 1.2rem;
-    color: var(--pill);
+    font-size: var(--fs-sub);
+    color: var(--accent);
     cursor:pointer;
     padding: 2px 8px;
     border-radius: 8px;
   }
-  .cal-nav:hover{ background: #fdecef; }
+  .cal-nav:hover{ background: var(--hover-bg); }
   .cal-month{
     font-family:'Caveat', cursive;
     font-weight:700;
-    font-size: 1.4rem;
-    color:#5c4038;
+    font-size: var(--fs-sub);
+    color: var(--heading);
     min-width: 150px;
     text-align:center;
   }
@@ -237,7 +262,7 @@
   }
   .cal-dow{
     text-align:center;
-    font-size: 0.7rem;
+    font-size: var(--fs-text);
     font-weight:700;
     color: var(--ink-soft);
     padding-bottom: 4px;
@@ -246,7 +271,7 @@
     aspect-ratio: 1;
     border-radius: 10px;
     border: 2px solid var(--frame);
-    background: #fff9fa;
+    background: var(--cell-bg);
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -254,7 +279,7 @@
     cursor:pointer;
     position:relative;
     font-weight:600;
-    font-size: 0.85rem;
+    font-size: var(--fs-text);
     transition: background .15s ease, border-color .15s ease;
     padding: 2px;
     overflow:hidden;
@@ -267,25 +292,25 @@
     text-align:center;
     font-family:'Caveat', cursive;
     font-weight:700;
-    font-size: 1.1rem;
+    font-size: var(--fs-text);
     line-height:1;
-    height: 1.1rem;
+    height: 1em;
   }
-  .cal-cell[data-mark="X"]{ background:#f3f0ef; }
+  .cal-cell[data-mark="X"]{ background: var(--mark-x-bg); }
   .cal-cell[data-mark="X"] .mark{ color: var(--mark-x); }
-  .cal-cell[data-mark="F"]{ background:#fbe9e8; }
+  .cal-cell[data-mark="F"]{ background: var(--mark-f-bg); }
   .cal-cell[data-mark="F"] .mark{ color: var(--mark-f); }
-  .cal-cell[data-mark="D"]{ background:#eaf3e8; }
+  .cal-cell[data-mark="D"]{ background: var(--mark-d-bg); }
   .cal-cell[data-mark="D"] .mark{ color: var(--mark-d); }
 
-  .cal-day-num{ font-size: 0.75rem; color: var(--ink); line-height:1.3; }
+  .cal-day-num{ font-size: var(--fs-text); color: var(--ink); line-height:1.1; }
 
   .cal-legend{
     display:flex;
     justify-content:center;
     gap: 16px;
     margin-top: 12px;
-    font-size: 0.75rem;
+    font-size: var(--fs-text);
     color: var(--ink-soft);
   }
   .cal-legend span b{ color: var(--ink); }
@@ -301,18 +326,18 @@
     display:inline-block;
     font-family:'Caveat', cursive;
     font-weight:700;
-    font-size: 2.6rem;
+    font-size: var(--fs-display);
     line-height:1;
     padding: 6px 28px 10px;
     border-radius: 999px;
-    color:#fff;
+    color: var(--pill-text);
     background: var(--pill);
     transition: background .25s ease;
   }
-  .counter-badge.up{ background: var(--lucky); }
-  .counter-badge.down{ background: var(--unlucky); }
+  .counter-badge.up{ background: var(--lucky); color:#fff; }
+  .counter-badge.down{ background: var(--unlucky); color:#fff; }
   .counter-label{
-    font-size: 0.85rem;
+    font-size: var(--fs-text);
     color: var(--ink-soft);
     margin-top: 8px;
   }
@@ -320,11 +345,11 @@
   .counter-done-title{
     font-family:'Caveat', cursive;
     font-weight:700;
-    font-size: 2.2rem;
-    color:#5c4038;
+    font-size: var(--fs-heading);
+    color: var(--heading);
   }
   .counter-done-sub{
-    font-size: 0.85rem;
+    font-size: var(--fs-text);
     color: var(--ink-soft);
     margin: 4px 0 16px;
   }
@@ -336,8 +361,8 @@
   .counter-done-value{
     font-family:'Caveat', cursive;
     font-weight:700;
-    font-size: 1.4rem;
-    color: var(--pill);
+    font-size: var(--fs-sub);
+    color: var(--accent);
     margin-bottom: 16px;
   }
 
@@ -348,28 +373,184 @@
     gap: 6px;
   }
   .cal-challenge-item{
-    background: #fdeaec;
+    background: var(--item-bg);
     border-radius: 12px;
     padding: 8px 12px;
-    font-size: 0.85rem;
+    font-size: var(--fs-text);
     display:flex;
     justify-content:space-between;
     gap: 10px;
   }
-  .cal-challenge-item b{ color: #5c4038; }
+  .cal-challenge-item b{ color: var(--heading); }
   .cal-challenge-empty{
     text-align:center;
-    font-size: 0.85rem;
+    font-size: var(--fs-text);
     color: var(--ink-soft);
     padding: 4px 0;
   }
 
   footer{
     text-align:center;
-    font-size: 0.75rem;
+    font-size: var(--fs-text);
     color: var(--ink-soft);
     margin-top: 10px;
   }
+
+  /* Einklappbare Challenge-Liste im Kalender */
+  [hidden]{ display:none !important; }
+  .cal-challenge-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size: var(--fs-text);
+    color: var(--heading);
+    background:none;
+    border:none;
+    padding: 6px 4px;
+    cursor:pointer;
+    text-align:left;
+  }
+  .cal-challenge-toggle .chev{
+    color: var(--accent);
+    transition: transform .2s ease;
+  }
+  .cal-challenge-toggle[aria-expanded="false"] .chev{ transform: rotate(-90deg); }
+  .cal-challenge-body{
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+  }
+
+  /* Einstellungen */
+  .settings-btn{
+    position:absolute;
+    right:-6px;
+    top:-6px;
+    background:none;
+    border:none;
+    font-size: 26px;
+    line-height:1;
+    padding: 4px;
+    border-radius: 10px;
+    cursor:pointer;
+    transition: transform .2s ease;
+  }
+  .settings-btn:hover{ transform: rotate(30deg); }
+  .settings-label{
+    font-size: var(--fs-text);
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .theme-row{
+    display:flex;
+    gap: 8px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  /* Themes (Flowers ist der Standard in :root) */
+  :root[data-palette="ocean"]{
+    --bg: #e6f1fb;
+    --frame: #bcd8f3;
+    --pill: #3b7dd8;
+    --pill-text: #ffffff;
+    --accent: #3b7dd8;
+    --ink: #2f4258;
+    --ink-soft: #62788f;
+    --heading: #274a72;
+    --chip-bg: #f1f7fd;
+    --cell-bg: #f6faff;
+    --hover-bg: #e3effb;
+    --item-bg: #e3effb;
+    --grid-line: rgba(59,125,216,0.07);
+    --mark-x-bg: #eceff2;
+  }
+  :root[data-palette="honey"]{
+    --bg: #fff7dc;
+    --frame: #fbe3a0;
+    --pill: #f0b429;
+    --pill-text: #4a3410;
+    --accent: #a8700a;
+    --ink: #5a4632;
+    --ink-soft: #8a7658;
+    --heading: #6b4b12;
+    --chip-bg: #fffaea;
+    --cell-bg: #fffcf0;
+    --hover-bg: #fff1c2;
+    --item-bg: #fff1c9;
+    --grid-line: rgba(240,180,41,0.10);
+    --mark-x-bg: #f3efe4;
+  }
+
+  /* Modusauswahl (Startbildschirm) */
+  .mode-select-list{
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+    margin-top: 26px;
+  }
+  .mode-select-btn{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    width:100%;
+    background: var(--card);
+    border: 2px solid var(--frame);
+    border-radius: 20px;
+    padding: 16px 18px;
+    cursor:pointer;
+    text-align:left;
+    font-family:'Quicksand', sans-serif;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .mode-select-btn:hover{ transform: translateY(-2px); border-color: var(--pill); }
+  .mode-select-emoji{ font-size: 2rem; flex-shrink:0; }
+  .mode-select-text{ display:flex; flex-direction:column; gap:2px; }
+  .mode-select-title{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: var(--fs-heading);
+    color: var(--heading);
+  }
+  .mode-select-desc{ font-size: var(--fs-text); color: var(--ink-soft); }
+
+  /* Allgemeiner Kalender (Klappfenster in den Einstellungen) */
+  .overview-cal{ margin-top: 8px; }
+  .overview-mode-checks{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 4px 12px;
+    margin-bottom: 12px;
+    justify-content:center;
+  }
+  .overview-mode-checks label{
+    display:inline-flex;
+    align-items:center;
+    gap: 5px;
+    font-size: var(--fs-text);
+  }
+  .overview-mode-checks input{ accent-color: var(--pill); }
+  .ov-badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:2px;
+    justify-content:center;
+    margin-top: 2px;
+  }
+  .ov-badge{
+    font-size: 0.5rem;
+    font-weight:700;
+    padding: 1px 3px;
+    border-radius: 4px;
+    color:#fff;
+    line-height: 1.3;
+  }
+  .ov-badge.mark-D{ background: var(--mark-d); }
+  .ov-badge.mark-F{ background: var(--mark-f); }
+  .ov-badge.mark-X{ background: var(--mark-x); }
 
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -379,30 +560,123 @@
       --ink:#f1e4e2;
       --ink-soft:#c3aba6;
       --cream:#5a4a34;
+      --grid-line: rgba(242,119,126,0.08);
+      --chip-bg:#3a2b2d;
+      --cell-bg:#2f2426;
+      --mark-x-bg:#332a29;
+      --mark-f-bg:#3d2a29;
+      --mark-d-bg:#2a3a2c;
+      --item-bg:#3a2528;
     }
-    body{ background-image:
-      linear-gradient(rgba(242,119,126,0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(242,119,126,0.08) 1px, transparent 1px);
+    :root[data-palette="ocean"]:not([data-theme="light"]){
+      --bg:#131d2a;
+      --card:#1c2837;
+      --frame:#2f4560;
+      --ink:#e4eef9;
+      --ink-soft:#9db3c9;
+      --heading:#cfe2f7;
+      --accent:#4a8ddf;
+      --grid-line: rgba(59,125,216,0.10);
+      --chip-bg:#243447;
+      --cell-bg:#1c2837;
+      --hover-bg:#263a52;
+      --mark-x-bg:#232d3a;
+      --mark-f-bg:#3a2a30;
+      --mark-d-bg:#223a30;
+      --item-bg:#263a52;
     }
-    .num-chip{ background:#3a2b2d; }
-    .cal-cell{ background:#2f2426; }
-    .cal-cell[data-mark="X"]{ background:#332a29; }
-    .cal-cell[data-mark="F"]{ background:#3d2a29; }
-    .cal-cell[data-mark="D"]{ background:#2a3a2c; }
-    .counter-badge{ background: var(--pill); }
-    .cal-challenge-item{ background:#3a2528; }
+    :root[data-palette="honey"]:not([data-theme="light"]){
+      --bg:#261f12;
+      --card:#322a19;
+      --frame:#52431f;
+      --ink:#f6ead2;
+      --ink-soft:#cdb98f;
+      --heading:#f3dfa8;
+      --accent:#c98a0a;
+      --grid-line: rgba(240,180,41,0.09);
+      --chip-bg:#3d3320;
+      --cell-bg:#322a19;
+      --hover-bg:#453919;
+      --mark-x-bg:#363025;
+      --mark-f-bg:#3d2a26;
+      --mark-d-bg:#2a3a26;
+      --item-bg:#453919;
+    }
   }
 </style>
 </head>
 <body>
 <div class="app">
 
+  <div id="modeSelectScreen">
+    <header>
+      <h1>Spiele</h1>
+      <div class="subtitle">Wähle einen Modus</div>
+    </header>
+    <div class="mode-select-list" id="modeSelectList">
+      <button type="button" class="mode-select-btn" data-mode="b1">
+        <span class="mode-select-emoji">🛠️</span>
+        <span class="mode-select-text">
+          <span class="mode-select-title">In Bearbeitung 1</span>
+          <span class="mode-select-desc">Testmodus, gleiches Overlay wie Weekly Secret</span>
+        </span>
+      </button>
+      <button type="button" class="mode-select-btn" data-mode="weekly">
+        <span class="mode-select-emoji">🌸</span>
+        <span class="mode-select-text">
+          <span class="mode-select-title">Weekly Secret</span>
+          <span class="mode-select-desc">Bist du heute lucky?</span>
+        </span>
+      </button>
+      <button type="button" class="mode-select-btn" data-mode="b2">
+        <span class="mode-select-emoji">🧩</span>
+        <span class="mode-select-text">
+          <span class="mode-select-title">In Bearbeitung 2</span>
+          <span class="mode-select-desc">Demnächst verfügbar</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mainScreen" hidden>
+
   <header>
-    <span class="flower" style="left:-6px; top:-6px;">🌸</span>
-    <h1>Weekly Secret</h1>
-    <div class="subtitle">Bist du heute lucky?</div>
+    <span class="flower" id="headerEmoji" style="left:-6px; top:-6px;">🌸</span>
+    <button class="settings-btn" id="settingsBtn" type="button" aria-label="Einstellungen" aria-expanded="false" aria-controls="settingsPanel">⚙️</button>
+    <h1 id="appTitle">Weekly Secret</h1>
+    <div class="subtitle" id="appSubtitle">Bist du heute lucky?</div>
   </header>
 
+  <div class="panel" id="settingsPanel" hidden>
+    <div class="panel-inner">
+      <div class="calendar-title">Einstellungen</div>
+      <div class="settings-label">Theme</div>
+      <div class="theme-row" id="themeRow"></div>
+
+      <div class="settings-label" style="margin-top:18px;">Modus wechseln</div>
+      <div class="theme-row" id="modeSwitchRow"></div>
+
+      <div class="settings-label" style="margin-top:18px;">Allgemeiner Kalender</div>
+      <div class="overview-cal">
+        <button type="button" class="cal-challenge-toggle" id="overviewToggle" aria-expanded="false">
+          <span>Kalender anzeigen (schreibgeschützt)</span><span class="chev">▾</span>
+        </button>
+        <div id="overviewBody" hidden>
+          <div class="overview-mode-checks" id="overviewModeChecks"></div>
+          <div class="cal-header">
+            <button class="cal-nav" id="ovPrev">‹</button>
+            <div class="cal-month" id="ovMonthLabel"></div>
+            <button class="cal-nav" id="ovNext">›</button>
+          </div>
+          <div class="cal-grid" id="ovGrid"></div>
+          <div class="cal-legend" id="ovLegend"></div>
+          <div class="cal-challenge-panel" id="ovList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="weeklyUI">
   <div class="daybar" id="daybar"></div>
 
   <div class="panel">
@@ -451,6 +725,18 @@
         <button class="reroll" id="startNewChallengeBtn">Neue Challenge starten</button>
       </div>
     </div>
+  </div>
+  </div>
+
+  <div id="placeholderUI" hidden>
+    <div class="panel">
+      <div class="panel-inner">
+        <div class="calendar-title">In Bearbeitung</div>
+        <div class="empty-state">Dieser Modus ist noch in Arbeit. Schau später wieder vorbei! 🚧</div>
+      </div>
+    </div>
+  </div>
+
   </div>
 
 </div>
@@ -611,6 +897,8 @@
 
   // ---- Calendar ----
   const calMarks = {}; // "YYYY-MM-DD" -> "X" | "F" | "D"
+  const calChallenges = {}; // "YYYY-MM-DD" -> eingefrorene Challenge, sobald "D" gesetzt wurde
+  let calChallengesOpen = true; // Monatsliste der Challenges ein-/ausgeklappt
   const MARK_CYCLE = ["", "X", "F", "D"];
   const MONTH_NAMES = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
   const DOW_LABELS = ["Mo","Di","Mi","Do","Fr","Sa","So"];
@@ -640,8 +928,17 @@
     const next = MARK_CYCLE[(idx + 1) % MARK_CYCLE.length];
     if (next === "") delete calMarks[key];
     else calMarks[key] = next;
+    // "D": Challenge im Moment des Eintragens festhalten, damit sie sich nicht mehr ändert
+    if (next === "D") calChallenges[key] = challengeLabelForDateKey(key);
+    else delete calChallenges[key];
     renderCalendar();
     saveState();
+  }
+
+  function challengeLabelForDateKey(key){
+    const [y, m, d] = key.split("-").map(Number);
+    const dayDef = DAY_BY_JSIDX[new Date(y, m - 1, d).getDay()];
+    return challengeSummaryForState(dayStates[dayDef.key]);
   }
 
   function challengeSummaryForState(state){
@@ -692,6 +989,7 @@
   document.getElementById("startNewChallengeBtn").addEventListener("click", () => {
     COUNTER_START = Number(newChallengeDaysInput.value);
     Object.keys(calMarks).forEach(k => delete calMarks[k]);
+    Object.keys(calChallenges).forEach(k => delete calChallenges[k]);
     renderCalendar();
     saveState();
   });
@@ -768,6 +1066,23 @@
       return;
     }
 
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "cal-challenge-toggle";
+    toggle.setAttribute("aria-expanded", String(calChallengesOpen));
+    toggle.innerHTML = `<span>Challenges im ${MONTH_NAMES[calMonth]} (${dEntries.length})</span><span class="chev">▾</span>`;
+    const body = document.createElement("div");
+    body.className = "cal-challenge-body";
+    body.hidden = !calChallengesOpen;
+    toggle.addEventListener("click", () => {
+      calChallengesOpen = !calChallengesOpen;
+      toggle.setAttribute("aria-expanded", String(calChallengesOpen));
+      body.hidden = !calChallengesOpen;
+      saveState();
+    });
+    panel.appendChild(toggle);
+    panel.appendChild(body);
+
     dEntries.forEach(key => {
       const [y, m, d] = key.split("-").map(Number);
       const jsDow = new Date(y, m - 1, d).getDay();
@@ -776,28 +1091,36 @@
       const item = document.createElement("div");
       item.className = "cal-challenge-item";
       const dateLabel = `${d}. ${MONTH_NAMES[m-1].slice(0,3)}`;
-      const challengeLabel = challengeSummaryForState(state);
+      // eingefrorene Challenge hat Vorrang vor dem aktuellen Tageszustand
+      const challengeLabel = calChallenges[key] || challengeSummaryForState(state);
       item.innerHTML = `<span>${dateLabel} <b>(${dayDef.label})</b></span><span>${challengeLabel ? "<b>" + challengeLabel + "</b>" : "noch nicht geladen"}</span>`;
-      panel.appendChild(item);
+      body.appendChild(item);
     });
   }
 
   // ---- Persistence (this browser / this device only) ----
-  const STORAGE_KEY = "weeklySecret_v1";
+  // Jeder Modus wird komplett unabhängig unter seinem eigenen Key gespeichert.
+  const MODES = {
+    weekly: { label: "Weekly Secret",     storageKey: "weeklySecret_v1",    abbr: "WS", subtitle: "Bist du heute lucky?" },
+    b1:     { label: "In Bearbeitung 1",  storageKey: "weeklySecret_v1_b1", abbr: "B1", subtitle: "Testmodus, gleiches Overlay wie Weekly Secret" },
+    b2:     { label: "In Bearbeitung 2",  storageKey: "weeklySecret_v1_b2", abbr: "B2", subtitle: "Demnächst verfügbar" },
+  };
+  let currentMode = null;
+  let currentStorageKey = MODES.weekly.storageKey;
 
   function saveState(){
     try{
-      const payload = { dayStates, currentDay, calMarks, counterStart: COUNTER_START };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      const payload = { dayStates, currentDay, calMarks, calChallenges, calChallengesOpen, counterStart: COUNTER_START };
+      localStorage.setItem(currentStorageKey, JSON.stringify(payload));
     } catch (e){
       // storage unavailable (private mode, quota, etc.) — app still works, just won't persist
       console.warn("Konnte nicht speichern:", e);
     }
   }
 
-  function loadState(){
+  function loadStateFromKey(key){
     try{
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(key);
       if (!raw) return null;
       return JSON.parse(raw);
     } catch (e){
@@ -806,31 +1129,263 @@
     }
   }
 
-  // initial state: restore from this device if available, otherwise
-  // pre-generate all days so calendar D-marks have something to show
-  const saved = loadState();
-  DAYS.forEach(d => {
-    dayStates[d.key] = (saved && saved.dayStates && saved.dayStates[d.key]) || generateState();
-  });
-  if (saved && saved.calMarks) Object.assign(calMarks, saved.calMarks);
-  if (saved && typeof saved.counterStart === "number"){
-    COUNTER_START = saved.counterStart;
+  function resetModeState(){
+    Object.keys(dayStates).forEach(k => delete dayStates[k]);
+    Object.keys(calMarks).forEach(k => delete calMarks[k]);
+    Object.keys(calChallenges).forEach(k => delete calChallenges[k]);
+    currentDay = null;
+    calChallengesOpen = true;
+    COUNTER_START = 15;
+  }
+
+  // Lädt die Daten eines Modus und zeigt dessen UI an. Jeder Modus hat
+  // seinen eigenen Kalender, eigene Challenges und eigenen Zähler.
+  function applyMode(modeKey){
+    if (!MODES[modeKey]) modeKey = "weekly";
+    currentMode = modeKey;
+    currentStorageKey = MODES[modeKey].storageKey;
+
+    resetModeState();
+    const saved = loadStateFromKey(currentStorageKey);
+    DAYS.forEach(d => {
+      dayStates[d.key] = (saved && saved.dayStates && saved.dayStates[d.key]) || generateState();
+    });
+    if (saved && saved.calMarks) Object.assign(calMarks, saved.calMarks);
+    if (saved && saved.calChallenges) Object.assign(calChallenges, saved.calChallenges);
+    if (saved && typeof saved.calChallengesOpen === "boolean") calChallengesOpen = saved.calChallengesOpen;
+    // bereits vorhandene D-Einträge ohne festgehaltene Challenge: jetzt festhalten
+    Object.keys(calMarks).forEach(k => {
+      if (calMarks[k] === "D" && !calChallenges[k]) calChallenges[k] = challengeLabelForDateKey(k);
+    });
+    if (saved && typeof saved.counterStart === "number") COUNTER_START = saved.counterStart;
     newChallengeDaysInput.value = COUNTER_START;
     newChallengeDaysLabel.textContent = `${COUNTER_START} Tage`;
-  }
 
-  const todayDayDef = DAY_BY_JSIDX[today.getDay()];
-  if (todayDayDef){
-    currentDay = todayDayDef.key;
-    document.querySelectorAll(".day-btn").forEach(b => {
-      b.classList.toggle("active", b.dataset.key === currentDay);
+    document.getElementById("challengePanel").style.display = "none";
+    const todayDayDef = DAY_BY_JSIDX[today.getDay()];
+    if (todayDayDef){
+      currentDay = todayDayDef.key;
+      document.querySelectorAll(".day-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.key === currentDay);
+      });
+      document.getElementById("challengePanel").style.display = "block";
+      renderCurrentDay();
+    }
+
+    renderCalendar();
+    saveState();
+
+    // UI umschalten: In Bearbeitung 1 & Weekly Secret teilen sich zu
+    // Testzwecken dasselbe Overlay; In Bearbeitung 2 zeigt nur einen Platzhalter.
+    document.getElementById("appTitle").textContent = MODES[modeKey].label;
+    document.getElementById("appSubtitle").textContent = MODES[modeKey].subtitle;
+    document.getElementById("weeklyUI").hidden = (modeKey === "b2");
+    document.getElementById("placeholderUI").hidden = (modeKey !== "b2");
+    document.querySelectorAll(".mode-switch-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.mode === modeKey);
     });
-    document.getElementById("challengePanel").style.display = "block";
-    renderCurrentDay();
+
+    document.getElementById("modeSelectScreen").hidden = true;
+    document.getElementById("mainScreen").hidden = false;
   }
 
-  renderCalendar();
-  saveState();
+  document.querySelectorAll(".mode-select-btn").forEach(btn => {
+    btn.addEventListener("click", () => applyMode(btn.dataset.mode));
+  });
+
+  const modeSwitchRow = document.getElementById("modeSwitchRow");
+  Object.keys(MODES).forEach(key => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "theme-btn mode-switch-btn";
+    btn.dataset.mode = key;
+    btn.textContent = MODES[key].label;
+    btn.addEventListener("click", () => applyMode(key));
+    modeSwitchRow.appendChild(btn);
+  });
+
+  // ---- Allgemeiner Kalender (schreibgeschützt, Klappfenster in den Einstellungen) ----
+  let ovYear = today.getFullYear();
+  let ovMonth = today.getMonth();
+  const OVERVIEW_KEY = "weeklySecret_overviewModes";
+  let overviewModes = null;
+  try{
+    const raw = localStorage.getItem(OVERVIEW_KEY);
+    overviewModes = raw ? JSON.parse(raw) : null;
+  } catch (e){ overviewModes = null; }
+  if (!overviewModes) overviewModes = { weekly: true, b1: true, b2: true };
+
+  function saveOverviewModes(){
+    try{ localStorage.setItem(OVERVIEW_KEY, JSON.stringify(overviewModes)); } catch(e){}
+  }
+
+  function buildOverviewChecks(){
+    const wrap = document.getElementById("overviewModeChecks");
+    wrap.innerHTML = "";
+    Object.keys(MODES).forEach(key => {
+      const label = document.createElement("label");
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!overviewModes[key];
+      cb.addEventListener("change", () => {
+        overviewModes[key] = cb.checked;
+        saveOverviewModes();
+        renderOverviewCalendar();
+      });
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(MODES[key].label));
+      wrap.appendChild(label);
+    });
+  }
+
+  document.getElementById("ovPrev").addEventListener("click", () => {
+    ovMonth--; if (ovMonth < 0){ ovMonth = 11; ovYear--; }
+    renderOverviewCalendar();
+  });
+  document.getElementById("ovNext").addEventListener("click", () => {
+    ovMonth++; if (ovMonth > 11){ ovMonth = 0; ovYear++; }
+    renderOverviewCalendar();
+  });
+
+  function renderOverviewCalendar(){
+    document.getElementById("ovMonthLabel").textContent = `${MONTH_NAMES[ovMonth]} ${ovYear}`;
+    const grid = document.getElementById("ovGrid");
+    grid.innerHTML = "";
+
+    DOW_LABELS.forEach(l => {
+      const el = document.createElement("div");
+      el.className = "cal-dow";
+      el.textContent = l;
+      grid.appendChild(el);
+    });
+
+    const firstOfMonth = new Date(ovYear, ovMonth, 1);
+    const firstJsDow = firstOfMonth.getDay();
+    const leadingBlanks = (firstJsDow + 6) % 7;
+    const daysInMonth = new Date(ovYear, ovMonth + 1, 0).getDate();
+
+    for (let i = 0; i < leadingBlanks; i++){
+      const blank = document.createElement("div");
+      blank.className = "cal-cell empty";
+      grid.appendChild(blank);
+    }
+
+    // Daten aller gewählten Modi read-only aus dem Speicher laden
+    const modeData = {};
+    Object.keys(MODES).forEach(key => {
+      if (!overviewModes[key]) return;
+      modeData[key] = loadStateFromKey(MODES[key].storageKey) || {};
+    });
+
+    const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+    const entries = [];
+
+    for (let d = 1; d <= daysInMonth; d++){
+      const key = dateKey(ovYear, ovMonth, d);
+      const cell = document.createElement("div");
+      cell.className = "cal-cell";
+      if (key === todayKey) cell.classList.add("today");
+      cell.innerHTML = `<span class="cal-day-num">${d}</span>`;
+      const badgeWrap = document.createElement("div");
+      badgeWrap.className = "ov-badges";
+      Object.keys(modeData).forEach(mKey => {
+        const marks = modeData[mKey].calMarks || {};
+        const mark = marks[key];
+        if (!mark) return;
+        const badge = document.createElement("span");
+        badge.className = `ov-badge mark-${mark}`;
+        badge.textContent = `${MODES[mKey].abbr}:${mark}`;
+        badgeWrap.appendChild(badge);
+        entries.push({ day: d, modeKey: mKey, mark, challenge: (modeData[mKey].calChallenges || {})[key] });
+      });
+      cell.appendChild(badgeWrap);
+      grid.appendChild(cell);
+    }
+
+    document.getElementById("ovLegend").innerHTML = `
+      <span><b class="legend-d">D</b> Done</span>
+      <span><b class="legend-f">F</b> Fail</span>
+      <span><b class="legend-x">X</b> nicht möglich</span>
+    `;
+
+    const list = document.getElementById("ovList");
+    list.innerHTML = "";
+    if (entries.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "cal-challenge-empty";
+      empty.textContent = "Keine Einträge in diesem Monat";
+      list.appendChild(empty);
+    } else {
+      entries.sort((a, b) => a.day - b.day);
+      entries.forEach(e => {
+        const item = document.createElement("div");
+        item.className = "cal-challenge-item";
+        const dateLabel = `${e.day}. ${MONTH_NAMES[ovMonth].slice(0,3)}`;
+        const challengeLabel = (e.mark === "D" && e.challenge) ? ` – ${e.challenge}` : "";
+        item.innerHTML = `<span>${dateLabel} <b>(${MODES[e.modeKey].label})</b></span><span><b>${e.mark}</b>${challengeLabel}</span>`;
+        list.appendChild(item);
+      });
+    }
+  }
+
+  document.getElementById("overviewToggle").addEventListener("click", () => {
+    const toggle = document.getElementById("overviewToggle");
+    const body = document.getElementById("overviewBody");
+    const willOpen = body.hidden;
+    body.hidden = !willOpen;
+    toggle.setAttribute("aria-expanded", String(willOpen));
+    if (willOpen){
+      buildOverviewChecks();
+      renderOverviewCalendar();
+    }
+  });
+
+  // ---- Einstellungen & Themes ----
+  const THEMES = {
+    flowers: { name: "Flowers", emoji: "🌸" },
+    ocean:   { name: "Ocean",   emoji: "🐳" },
+    honey:   { name: "Honey",   emoji: "🍯" },
+  };
+  const THEME_KEY = "weeklySecret_theme";
+  let currentTheme = "flowers";
+  try{
+    const t = localStorage.getItem(THEME_KEY);
+    if (THEMES[t]) currentTheme = t;
+  } catch (e){}
+
+  const themeRow = document.getElementById("themeRow");
+  Object.keys(THEMES).forEach(key => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "theme-btn";
+    btn.dataset.theme = key;
+    btn.textContent = `${THEMES[key].emoji} ${THEMES[key].name}`;
+    btn.addEventListener("click", () => applyTheme(key));
+    themeRow.appendChild(btn);
+  });
+
+  function applyTheme(name){
+    if (!THEMES[name]) name = "flowers";
+    currentTheme = name;
+    if (name === "flowers") document.documentElement.removeAttribute("data-palette");
+    else document.documentElement.setAttribute("data-palette", name);
+    document.getElementById("headerEmoji").textContent = THEMES[name].emoji;
+    themeRow.querySelectorAll(".theme-btn").forEach(b => {
+      const on = b.dataset.theme === name;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", String(on));
+    });
+    try{ localStorage.setItem(THEME_KEY, name); } catch (e){}
+  }
+  applyTheme(currentTheme);
+
+  const settingsBtn = document.getElementById("settingsBtn");
+  const settingsPanel = document.getElementById("settingsPanel");
+  settingsBtn.addEventListener("click", () => {
+    const willOpen = settingsPanel.hidden;
+    settingsPanel.hidden = !willOpen;
+    settingsBtn.setAttribute("aria-expanded", String(willOpen));
+  });
 </script>
 </body>
 </html>
