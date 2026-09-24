@@ -1371,6 +1371,7 @@
     hideAllFlowBlocks();
     activeChallengeEntry = null;
     if (!state || state.isLucky){ timerState = null; return; }
+    if (calMarks[currentTodayKey()]){ timerState = null; return; }
 
     const up = upIndex(state);
     const entry = state.challenge[up];
