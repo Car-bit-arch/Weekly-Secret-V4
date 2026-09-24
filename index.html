@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Spiele-Hub</title>
+<title>Games Hub</title>
 <script>
   (function(){
     try{
@@ -39,7 +39,7 @@
     --mark-x-bg: #f3f0ef;
     --mark-f-bg: #fbe9e8;
     --mark-d-bg: #eaf3e8;
-    /* einheitliche Schriftgrößen */
+    /* unified font sizes */
     --fs-title: 3.1rem;
     --fs-display: 2.2rem;
     --fs-heading: 1.7rem;
@@ -95,7 +95,25 @@
     flex-wrap:wrap;
     margin: 22px 0 20px;
   }
-  .day-btn, .theme-btn{
+  .day-btn{
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size: var(--fs-text);
+    border:none;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--accent);
+    border: 2px solid var(--frame);
+    cursor: default;
+    pointer-events: none;
+  }
+  .day-btn.active{
+    background: var(--pill);
+    color: var(--pill-text);
+    border-color: var(--pill);
+  }
+  .theme-btn{
     font-family:'Quicksand', sans-serif;
     font-weight:700;
     font-size: var(--fs-text);
@@ -108,8 +126,8 @@
     cursor:pointer;
     transition: transform .15s ease, background .15s ease, color .15s ease;
   }
-  .day-btn:hover, .theme-btn:hover{ transform: translateY(-1px); }
-  .day-btn.active, .theme-btn.active{
+  .theme-btn:hover{ transform: translateY(-1px); }
+  .theme-btn.active{
     background: var(--pill);
     color: var(--pill-text);
     border-color: var(--pill);
@@ -430,7 +448,7 @@
     margin-top: 10px;
   }
 
-  /* Einklappbare Challenge-Liste im Kalender */
+  /* Collapsible lists */
   [hidden]{ display:none !important; }
   .cal-challenge-toggle{
     display:flex;
@@ -458,7 +476,7 @@
     gap: 6px;
   }
 
-  /* Einstellungen */
+  /* Settings */
   .settings-btn{
     position:absolute;
     right:-6px;
@@ -485,7 +503,7 @@
     flex-wrap:wrap;
   }
 
-  /* Themes (Flowers ist der Standard in :root) */
+  /* Themes (Flowers is the default in :root) */
   :root[data-palette="ocean"]{
     --bg: #e6f1fb;
     --frame: #bcd8f3;
@@ -519,7 +537,7 @@
     --mark-x-bg: #f3efe4;
   }
 
-  /* Modusauswahl (Startbildschirm) */
+  /* Mode selection (start screen) */
   .mode-select-list{
     display:flex;
     flex-direction:column;
@@ -551,7 +569,7 @@
   }
   .mode-select-desc{ font-size: var(--fs-text); color: var(--ink-soft); }
 
-  /* Allgemeiner Kalender (Klappfenster in den Einstellungen) */
+  /* General calendar (collapsible panel in settings) */
   .overview-cal{ margin-top: 8px; }
   .overview-mode-checks{
     display:flex;
@@ -585,6 +603,26 @@
   .ov-badge.mark-D{ background: var(--mark-d); }
   .ov-badge.mark-F{ background: var(--mark-f); }
   .ov-badge.mark-X{ background: var(--mark-x); }
+
+  /* Explanation & counter-reveal screens */
+  .explain-block{ text-align:left; margin-bottom: 14px; font-size: var(--fs-text); line-height:1.5; }
+  .explain-block:last-of-type{ margin-bottom: 0; }
+  .explain-heading{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: var(--fs-heading);
+    color: var(--heading);
+    margin: 0 0 6px;
+  }
+  .mode-explain-item{ margin-bottom: 10px; }
+  .mode-explain-item b{ color: var(--heading); }
+  .reveal-value{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 3.6rem;
+    color: var(--heading);
+    margin: 10px 0 2px;
+  }
 
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -642,58 +680,142 @@
 <body>
 <div class="app">
 
-  <div id="modeSelectScreen">
+  <!-- ============== EXPLANATION SCREEN (shown once, before anything else) ============== -->
+  <div id="explanationScreen">
     <header>
-      <h1>Spiele</h1>
-      <div class="subtitle">Wähle einen Modus</div>
+      <h1><span class="t-en">Welcome</span><span class="t-de" hidden>Willkommen</span></h1>
+      <div class="subtitle"><span class="t-en">Read this before you start</span><span class="t-de" hidden>Lies dir das kurz durch, bevor es losgeht</span></div>
+    </header>
+
+    <div class="panel">
+      <div class="panel-inner">
+        <div class="explain-block">
+          <div class="explain-heading"><span class="t-en">How this works</span><span class="t-de" hidden>Wie das Ganze funktioniert</span></div>
+          <div class="t-en">This is a little hub for a few different daily challenge games. You'll pick a mode next — each mode keeps its own independent calendar, streak counter and challenge history, so switching between modes never costs you progress in any of them.</div>
+          <div class="t-de" hidden>Das hier ist ein Sammelplatz für ein paar verschiedene tägliche Challenge-Spiele. Als nächstes wählst du einen Modus – jeder Modus hat seinen eigenen Kalender, Zähler und Challenge-Verlauf, du kannst also zwischen den Modi wechseln, ohne irgendwo Fortschritt zu verlieren.</div>
+        </div>
+        <div class="explain-block">
+          <div class="explain-heading"><span class="t-en">The daily roll</span><span class="t-de" hidden>Der tägliche Wurf</span></div>
+          <div class="t-en">Every day, three numbers between 0 and 6 are rolled. Two of them are your "lucky numbers" for that weekday. If the main number matches one of them (and no two of the three numbers are the same), the day is <b>Lucky</b> and there's no challenge. Otherwise the day is <b>Unlucky</b>, and a random challenge is picked for you — either a number of times to repeat something, or a timer to run.</div>
+          <div class="t-de" hidden>Jeden Tag werden drei Zahlen zwischen 0 und 6 gewürfelt. Zwei davon sind deine "Glückszahlen" für diesen Wochentag. Stimmt die Hauptzahl mit einer davon überein (und sind nicht zwei der drei Zahlen gleich), ist der Tag <b>Lucky</b> und es gibt keine Challenge. Sonst ist er <b>Unlucky</b>, und es wird eine zufällige Challenge für dich ausgewählt – entweder eine Anzahl an Wiederholungen oder ein Timer, den du laufen lässt.</div>
+        </div>
+        <div class="explain-block">
+          <div class="explain-heading"><span class="t-en">Finishing a day</span><span class="t-de" hidden>Einen Tag abschließen</span></div>
+          <div class="t-en">Once you're done (or it wasn't possible), mark the day as <b>Done</b>, <b>Fail</b>, or <b>X</b> (not possible). That updates your calendar and the day counter below it.</div>
+          <div class="t-de" hidden>Wenn du fertig bist (oder es nicht möglich war), markierst du den Tag als <b>Done</b>, <b>Fail</b> oder <b>X</b> (nicht möglich). Das aktualisiert deinen Kalender und den Zähler darunter.</div>
+        </div>
+        <div class="explain-block">
+          <div class="explain-heading"><span class="t-en">The day counter</span><span class="t-de" hidden>Der Tage-Zähler</span></div>
+          <div class="t-en">The counter shows how many days you still have to keep playing the current challenge. It starts at a random number of days (3–30), drawn the first time you pick a mode. Marking a day <b>Done</b> takes 1 day off — 2 days off once you're on a streak of more than 3 Done-days in a row. Marking a day <b>Fail</b> adds 1 day — 2 days once you're on a streak of more than 3 Fail-days in a row. <b>X</b> doesn't change the counter at all. Once it reaches 0, the challenge is finished and you can start a new one — its length is drawn at random again.</div>
+          <div class="t-de" hidden>Der Zähler zeigt, wie viele Tage du die aktuelle Challenge noch weiterspielen musst. Er startet bei einer zufälligen Anzahl Tage (3–30), die beim ersten Mal nach der Moduswahl ausgelost wird. Ein <b>Done</b>-Tag zieht 1 Tag ab – 2 Tage, sobald du mehr als 3 Done-Tage am Stück hast. Ein <b>Fail</b>-Tag addiert 1 Tag – 2 Tage, sobald du mehr als 3 Fail-Tage am Stück hast. <b>X</b> ändert am Zähler nichts. Bei 0 ist die Challenge abgeschlossen und du kannst eine neue starten – ihre Länge wird wieder zufällig ausgelost.</div>
+        </div>
+        <div class="explain-block">
+          <div class="explain-heading"><span class="t-en">The modes</span><span class="t-de" hidden>Die Spielmodi</span></div>
+          <div class="mode-explain-item">
+            <span class="t-en"><b>👅 Oral Training — Mmmph~:</b> random oral-themed challenges, either a number of reps or a timed session.</span>
+            <span class="t-de" hidden><b>👅 Oral Training — Mmmpf~:</b> zufällige Challenges rund ums Orale, entweder eine Anzahl Wiederholungen oder eine Zeit-Session.</span>
+          </div>
+          <div class="mode-explain-item">
+            <span class="t-en"><b>🩲 Weekly Secret — Are you lucky today?:</b> a lighter game about what you wear, decided by the daily roll.</span>
+            <span class="t-de" hidden><b>🩲 Weekly Secret — Bist du heute im Glück?:</b> ein leichteres Spiel darüber, was du trägst, entschieden durch den täglichen Wurf.</span>
+          </div>
+          <div class="mode-explain-item">
+            <span class="t-en"><b>🍑 Anal Training — Train hard:</b> the same system as Oral Training, with its own set of challenges (placeholders by default — add your own in the code).</span>
+            <span class="t-de" hidden><b>🍑 Anal Training — Hart trainieren:</b> das gleiche System wie Oral Training, mit eigenen Challenges (standardmäßig Platzhalter – trage im Code eigene ein).</span>
+          </div>
+        </div>
+        <button class="reroll" id="explanationConfirmBtn" type="button" style="width:100%; margin-top:6px;">
+          <span class="t-en">Got it, continue</span><span class="t-de" hidden>Verstanden, weiter</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODE SELECT SCREEN ============== -->
+  <div id="modeSelectScreen" hidden>
+    <header>
+      <h1><span class="t-en">Games</span><span class="t-de" hidden>Spiele</span></h1>
+      <div class="subtitle"><span class="t-en">Choose a mode</span><span class="t-de" hidden>Wähle einen Modus</span></div>
     </header>
     <div class="mode-select-list" id="modeSelectList">
       <button type="button" class="mode-select-btn" data-mode="b1">
         <span class="mode-select-emoji">👅</span>
         <span class="mode-select-text">
           <span class="mode-select-title">Oral Training</span>
-          <span class="mode-select-desc">Take it deep!</span>
+          <span class="mode-select-desc"><span class="t-en">Take it deep!</span><span class="t-de" hidden>Nimm's tief!</span></span>
         </span>
       </button>
       <button type="button" class="mode-select-btn" data-mode="weekly">
         <span class="mode-select-emoji">🩲</span>
         <span class="mode-select-text">
           <span class="mode-select-title">Weekly Secret</span>
-          <span class="mode-select-desc">Are you lucky today?</span>
+          <span class="mode-select-desc"><span class="t-en">Are you lucky today?</span><span class="t-de" hidden>Bist du heute im Glück?</span></span>
         </span>
       </button>
       <button type="button" class="mode-select-btn" data-mode="b2">
         <span class="mode-select-emoji">🍑</span>
         <span class="mode-select-text">
           <span class="mode-select-title">Anal Training</span>
-          <span class="mode-select-desc">There's always more space!</span>
+          <span class="mode-select-desc"><span class="t-en">There's always more space!</span><span class="t-de" hidden>Da ist immer noch Platz!</span></span>
         </span>
       </button>
     </div>
   </div>
 
+  <!-- ============== COUNTER REVEAL SCREEN (own window, shown once per fresh mode start) ============== -->
+  <div id="counterRevealScreen" hidden>
+    <header>
+      <h1><span class="t-en">Your challenge length</span><span class="t-de" hidden>Deine Challenge-Länge</span></h1>
+      <div class="subtitle"><span class="t-en">has been set</span><span class="t-de" hidden>wurde festgelegt</span></div>
+    </header>
+    <div class="panel">
+      <div class="panel-inner">
+        <div class="reveal-value" id="revealValue">--</div>
+        <div class="counter-label"><span class="t-en">days</span><span class="t-de" hidden>Tage</span></div>
+        <div class="hint" style="margin-top:14px;">
+          <span class="t-en">That's how many days you'll be playing before you can start a new challenge.</span>
+          <span class="t-de" hidden>So viele Tage spielst du, bevor du eine neue Challenge starten kannst.</span>
+        </div>
+        <button class="reroll" id="counterRevealConfirmBtn" type="button" style="width:100%;" disabled>
+          <span class="t-en">Let's go!</span><span class="t-de" hidden>Los geht's!</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MAIN SCREEN ============== -->
   <div id="mainScreen" hidden>
 
   <header>
     <span class="flower" id="headerEmoji" style="left:-6px; top:-6px;">🌸</span>
-    <button class="settings-btn" id="settingsBtn" type="button" aria-label="Einstellungen" aria-expanded="false" aria-controls="settingsPanel">⚙️</button>
+    <button class="settings-btn" id="settingsBtn" type="button" aria-label="Settings" aria-expanded="false" aria-controls="settingsPanel">⚙️</button>
     <h1 id="appTitle">Weekly Secret</h1>
-    <div class="subtitle" id="appSubtitle">Bist du heute lucky?</div>
+    <div class="subtitle" id="appSubtitle">Are you lucky today?</div>
   </header>
 
   <div class="panel" id="settingsPanel" hidden>
     <div class="panel-inner">
-      <div class="calendar-title">Einstellungen</div>
-      <div class="settings-label">Theme</div>
+      <div class="calendar-title"><span class="t-en">Settings</span><span class="t-de" hidden>Einstellungen</span></div>
+      <div class="settings-label"><span class="t-en">Theme</span><span class="t-de" hidden>Theme</span></div>
       <div class="theme-row" id="themeRow"></div>
 
-      <div class="settings-label" style="margin-top:18px;">Modus wechseln</div>
+      <div class="settings-label" style="margin-top:18px;"><span class="t-en">Switch mode</span><span class="t-de" hidden>Modus wechseln</span></div>
       <div class="theme-row" id="modeSwitchRow"></div>
 
-      <div class="settings-label" style="margin-top:18px;">Allgemeiner Kalender</div>
+      <div class="settings-label" style="margin-top:18px;"><span class="t-en">Language</span><span class="t-de" hidden>Sprache</span></div>
+      <div class="overview-cal">
+        <button type="button" class="cal-challenge-toggle" id="langToggle" aria-expanded="false">
+          <span><span class="t-en">Choose language</span><span class="t-de" hidden>Sprache wählen</span></span><span class="chev">▾</span>
+        </button>
+        <div id="langBody" hidden>
+          <div class="theme-row" id="langRow"></div>
+        </div>
+      </div>
+
+      <div class="settings-label" style="margin-top:18px;"><span class="t-en">General calendar</span><span class="t-de" hidden>Allgemeiner Kalender</span></div>
       <div class="overview-cal">
         <button type="button" class="cal-challenge-toggle" id="overviewToggle" aria-expanded="false">
-          <span>Kalender anzeigen (schreibgeschützt)</span><span class="chev">▾</span>
+          <span><span class="t-en">Show calendar (read-only)</span><span class="t-de" hidden>Kalender anzeigen (schreibgeschützt)</span></span><span class="chev">▾</span>
         </button>
         <div id="overviewBody" hidden>
           <div class="overview-mode-checks" id="overviewModeChecks"></div>
@@ -715,13 +837,13 @@
 
   <div class="panel">
     <div class="panel-inner" id="resultPanel">
-      <div class="empty-state">Wähle oben deinen Tag, um die heutigen Zahlen zu ziehen ✨</div>
+      <div class="empty-state"><span class="t-en">Your numbers for today ✨</span><span class="t-de" hidden>Deine Zahlen für heute ✨</span></div>
     </div>
   </div>
 
   <div class="panel" id="challengePanel" style="display:none;">
     <div class="panel-inner">
-      <div class="challenge-title">Die Challenge</div>
+      <div class="challenge-title"><span class="t-en">The challenge</span><span class="t-de" hidden>Die Challenge</span></div>
       <div class="challenge-list" id="challengeList"></div>
     </div>
   </div>
@@ -729,21 +851,21 @@
   <div class="panel" id="challengeFlowPanel" style="display:none;">
     <div class="panel-inner">
       <div id="challengeCountBlock" hidden>
-        <div class="challenge-title">Anzahl</div>
+        <div class="challenge-title"><span class="t-en">Count</span><span class="t-de" hidden>Anzahl</span></div>
         <div class="flow-big-value" id="countValue">0</div>
-        <div class="flow-sub">Mal</div>
-        <button class="reroll" id="confirmCountBtn">Geschafft – weiter</button>
+        <div class="flow-sub"><span class="t-en">times</span><span class="t-de" hidden>Mal</span></div>
+        <button class="reroll" id="confirmCountBtn"><span class="t-en">Done – continue</span><span class="t-de" hidden>Geschafft – weiter</span></button>
       </div>
       <div id="challengeTimerBlock" hidden>
-        <div class="challenge-title">Timer</div>
+        <div class="challenge-title"><span class="t-en">Timer</span><span class="t-de" hidden>Timer</span></div>
         <div class="flow-big-value" id="timerValue">00:00</div>
-        <button class="reroll" id="startTimerBtn">Timer starten</button>
+        <button class="reroll" id="startTimerBtn">Start</button>
       </div>
       <div id="challengeDoneBlock" hidden>
-        <div class="challenge-title">Wie lief's?</div>
+        <div class="challenge-title"><span class="t-en">How did it go?</span><span class="t-de" hidden>Wie lief's?</span></div>
         <div class="mark-btn-row">
-          <button class="mark-btn mark-done" type="button" data-mark="D">Done</button>
-          <button class="mark-btn mark-fail" type="button" data-mark="F">Fail</button>
+          <button class="mark-btn mark-done" type="button" data-mark="D"><span class="t-en">Done</span><span class="t-de" hidden>Erledigt</span></button>
+          <button class="mark-btn mark-fail" type="button" data-mark="F"><span class="t-en">Fail</span><span class="t-de" hidden>Nicht geschafft</span></button>
           <button class="mark-btn mark-x" type="button" data-mark="X">X</button>
         </div>
       </div>
@@ -752,7 +874,7 @@
 
   <div class="panel">
     <div class="panel-inner">
-      <div class="calendar-title">Kalender</div>
+      <div class="calendar-title"><span class="t-en">Calendar</span><span class="t-de" hidden>Kalender</span></div>
       <div class="cal-header">
         <button class="cal-nav" id="calPrev">‹</button>
         <div class="cal-month" id="calMonthLabel"></div>
@@ -760,9 +882,9 @@
       </div>
       <div class="cal-grid" id="calGrid"></div>
       <div class="cal-legend">
-        <span><b class="legend-d">D</b> Done</span>
-        <span><b class="legend-f">F</b> Fail</span>
-        <span><b class="legend-x">X</b> nicht möglich</span>
+        <span><b class="legend-d">D</b> <span class="t-en">Done</span><span class="t-de" hidden>Erledigt</span></span>
+        <span><b class="legend-f">F</b> <span class="t-en">Fail</span><span class="t-de" hidden>Nicht geschafft</span></span>
+        <span><b class="legend-x">X</b> <span class="t-en">not possible</span><span class="t-de" hidden>nicht möglich</span></span>
       </div>
       <div class="cal-challenge-panel" id="calChallengePanel"></div>
     </div>
@@ -770,17 +892,15 @@
 
   <div class="panel">
     <div class="panel-inner">
-      <div class="calendar-title">Zähler</div>
+      <div class="calendar-title"><span class="t-en">Counter</span><span class="t-de" hidden>Zähler</span></div>
       <div class="counter-wrap" id="counterWrap">
         <span class="counter-badge" id="counterValue">15</span>
-        <div class="counter-label">Tage</div>
+        <div class="counter-label"><span class="t-en">days</span><span class="t-de" hidden>Tage</span></div>
       </div>
       <div class="counter-done" id="counterDone" style="display:none;">
-        <div class="counter-done-title">Geschafft! 🎉</div>
-        <div class="counter-done-sub">Wie viele Tage soll die neue Challenge haben?</div>
-        <input type="range" id="newChallengeDays" min="5" max="30" value="15">
-        <div class="counter-done-value" id="newChallengeDaysLabel">15 Tage</div>
-        <button class="reroll" id="startNewChallengeBtn">Neue Challenge starten</button>
+        <div class="counter-done-title"><span class="t-en">Finished! 🎉</span><span class="t-de" hidden>Geschafft! 🎉</span></div>
+        <div class="counter-done-sub"><span class="t-en">The length of the next challenge is drawn at random.</span><span class="t-de" hidden>Die Länge der nächsten Challenge wird zufällig ausgelost.</span></div>
+        <button class="reroll" id="startNewChallengeBtn"><span class="t-en">Start new challenge</span><span class="t-de" hidden>Neue Challenge starten</span></button>
       </div>
     </div>
   </div>
@@ -789,8 +909,8 @@
   <div id="placeholderUI" hidden>
     <div class="panel">
       <div class="panel-inner">
-        <div class="calendar-title">In Bearbeitung</div>
-        <div class="empty-state">Dieser Modus ist noch in Arbeit. Schau später wieder vorbei! 🚧</div>
+        <div class="calendar-title"><span class="t-en">Work in progress</span><span class="t-de" hidden>In Bearbeitung</span></div>
+        <div class="empty-state"><span class="t-en">This mode isn't ready yet. Check back later! 🚧</span><span class="t-de" hidden>Dieser Modus ist noch in Arbeit. Schau später wieder vorbei! 🚧</span></div>
       </div>
     </div>
   </div>
@@ -800,70 +920,139 @@
 </div>
 
 <script>
+  // ---- Language ----
+  const LANG_KEY = "weeklySecret_lang";
+  let currentLang = "en";
+  try{
+    const savedLang = localStorage.getItem(LANG_KEY);
+    if (savedLang === "de" || savedLang === "en") currentLang = savedLang;
+  } catch(e){}
+
+  const LANGS = [
+    { code: "en", nativeName: "English" },
+    { code: "de", nativeName: "Deutsch" },
+  ];
+
+  function refreshLangVisibility(){
+    const de = currentLang === "de";
+    document.querySelectorAll(".t-en").forEach(el => { el.hidden = de; });
+    document.querySelectorAll(".t-de").forEach(el => { el.hidden = !de; });
+  }
+
+  const DAY_LABELS = {
+    en: { Mon:"Mon", Tue:"Tue", Wed:"Wed", Thu:"Thu", Fri:"Fri", Sat:"Sat", Sun:"Sun" },
+    de: { Mon:"Mo",  Tue:"Di",  Wed:"Mi",  Thu:"Do",  Fri:"Fr",  Sat:"Sa",  Sun:"So"  },
+  };
+  function dayLabel(key){ return (DAY_LABELS[currentLang] || DAY_LABELS.en)[key]; }
+
+  const MONTH_NAMES_I18N = {
+    en: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+    de: ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"],
+  };
+  function monthNames(){ return MONTH_NAMES_I18N[currentLang] || MONTH_NAMES_I18N.en; }
+
+  // Small dictionary only for strings built dynamically inside innerHTML/textContent
+  // (everything else in the page uses the .t-en / .t-de span pairs above).
+  const T = {
+    en: {
+      twoNumbersMatch: "Two numbers match → automatically unlucky",
+      luckyNumbersForPrefix: "Lucky numbers for",
+      allOthersUnlucky: "· everything else is unlucky",
+      reroll: "Reroll",
+      rerollCost: "+1 day",
+      noChallengeToday: "No challenge today",
+      timerStart: "Start",
+      timerPause: "Pause",
+      timerResume: "Resume",
+      challengesInPrefix: "Challenges in",
+      notLoadedYet: "not loaded yet",
+      noEntriesThisMonth: "No entries this month",
+      wordDone: "Done",
+      wordFail: "Fail",
+      wordNotPossible: "not possible",
+    },
+    de: {
+      twoNumbersMatch: "Zwei Zahlen sind gleich → automatisch unlucky",
+      luckyNumbersForPrefix: "Lucky-Zahlen für",
+      allOthersUnlucky: "· alle anderen sind unlucky",
+      reroll: "Neu würfeln",
+      rerollCost: "+1 Tag",
+      noChallengeToday: "Keine Challenge heute",
+      timerStart: "Start",
+      timerPause: "Pause",
+      timerResume: "Fortsetzen",
+      challengesInPrefix: "Challenges im",
+      notLoadedYet: "noch nicht geladen",
+      noEntriesThisMonth: "Keine Einträge in diesem Monat",
+      wordDone: "Done",
+      wordFail: "Fail",
+      wordNotPossible: "nicht möglich",
+    },
+  };
+  function t(key){
+    const dict = T[currentLang] || T.en;
+    return (key in dict) ? dict[key] : (T.en[key] !== undefined ? T.en[key] : key);
+  }
+
   const DAYS = [
-    { key: "Mon", label: "Mo", jsIdx: 1 },
-    { key: "Tue", label: "Di", jsIdx: 2 },
-    { key: "Wed", label: "Mi", jsIdx: 3 },
-    { key: "Thu", label: "Do", jsIdx: 4 },
-    { key: "Fri", label: "Fr", jsIdx: 5 },
-    { key: "Sat", label: "Sa", jsIdx: 6 },
-    { key: "Sun", label: "So", jsIdx: 0 },
+    { key: "Mon", jsIdx: 1 },
+    { key: "Tue", jsIdx: 2 },
+    { key: "Wed", jsIdx: 3 },
+    { key: "Thu", jsIdx: 4 },
+    { key: "Fri", jsIdx: 5 },
+    { key: "Sat", jsIdx: 6 },
+    { key: "Sun", jsIdx: 0 },
   ];
 
-  // Weekly Secret hat weiterhin eine einfache Liste (keine Kategorien).
-  const CHALLENGES_WEEKLY = [
-    "Normal",
-    "String-Tanga",
-    "String Tanga unter",
-    "Dessous + String",
-    "Dessous + String + Knee Highs",
-  ];
+  // Weekly Secret keeps a simple flat list (no categories).
+  const CHALLENGES_WEEKLY = {
+    en: ["Normal", "Thong", "Thong worn underneath your clothes", "Lingerie + thong", "Lingerie + thong + knee highs"],
+    de: ["Normal", "String-Tanga", "String-Tanga unter der Kleidung", "Dessous + String", "Dessous + String + Kniestrümpfe"],
+  };
 
-  // Oral & Anal Training: Challenges sind in Kategorien organisiert.
-  // "count"  -> Zahlengenerator (Anzahl "Mal")
-  // "timer" / "Wearable_Timer" -> Countdown-Timer
-  // Beim Auswählen wird zuerst zufällig eine Kategorie, dann ein Eintrag
-  // daraus gewählt. Einfach hier im Code Einträge ergänzen/entfernen.
+  // Oral & Anal Training: challenges are organised into categories.
+  // "count"  -> number generator (how many times)
+  // "timer" / "Wearable_Timer" -> countdown timer
+  // A category is picked at random first, then an entry from it.
+  // To add your own challenges, just add a string to the "en" list — add
+  // the matching translation to "de" alongside it, in the same position.
   const CHALLENGES_B1 = { // Oral Training
     count: {
       min: 1, max: 50,
-      items: [
-        "Slow and deep",
-        "Slow and shallow",
-        "Fast and shallow",
-        "Fast and deep",
-        "Force into throat",
-        "Deepthroat",
-      ],
+      items: {
+        en: ["Slow and deep", "Slow and shallow", "Fast and shallow", "Fast and deep", "Force into throat", "Deepthroat"],
+        de: ["Langsam und tief", "Langsam und flach", "Schnell und flach", "Schnell und tief", "In den Rachen zwingen", "Deepthroat"],
+      },
     },
     timer: {
-      minSeconds: 10, maxSeconds: 300, // 10 Sekunden – 5 Minuten
-      items: [
-        "Lick only the tip",
-        "Lick the dildo all over",
-        "Suck the tip of the dildo while stroking it",
-        "Deepthroat at 100 bpm",
-      ],
+      minSeconds: 10, maxSeconds: 300, // 10 seconds – 5 minutes
+      items: {
+        en: ["Lick only the tip", "Lick the dildo all over", "Suck the tip while stroking it", "Deepthroat at 100 bpm"],
+        de: ["Nur die Spitze lecken", "Den Dildo überall ablecken", "Die Spitze lutschen, während er gestreichelt wird", "Deepthroat im 100-bpm-Takt"],
+      },
     },
   };
   const CHALLENGES_B2 = { // Anal Training
     count: {
       min: 15, max: 120,
-      items: [
-        "Platzhalter (Anzahl) – hier eigene Challenge eintragen",
-      ],
+      items: {
+        en: ["Placeholder (count) – enter your own challenge here"],
+        de: ["Platzhalter (Anzahl) – hier eigene Challenge eintragen"],
+      },
     },
     timer: {
-      minSeconds: 30, maxSeconds: 600, // 30 Sekunden – 10 Minuten
-      items: [
-        "Platzhalter (Timer) – hier eigene Challenge eintragen",
-      ],
+      minSeconds: 30, maxSeconds: 600, // 30 seconds – 10 minutes
+      items: {
+        en: ["Placeholder (timer) – enter your own challenge here"],
+        de: ["Platzhalter (Timer) – hier eigene Challenge eintragen"],
+      },
     },
     Wearable_Timer: {
-      minSeconds: 600, maxSeconds: 14400, // 10 Minuten – 4 Stunden
-      items: [
-        "Platzhalter (Wearable Timer) – hier eigene Challenge eintragen",
-      ],
+      minSeconds: 600, maxSeconds: 14400, // 10 minutes – 4 hours
+      items: {
+        en: ["Placeholder (wearable timer) – enter your own challenge here"],
+        de: ["Platzhalter (Wearable Timer) – hier eigene Challenge eintragen"],
+      },
     },
   };
   const CHALLENGE_SLOTS = 7; // numbers 0–6
@@ -876,15 +1065,6 @@
 
   function randNum(){ return Math.floor(Math.random() * 7); } // 0–6
 
-  function shuffle(arr){
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--){
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
   function pickLuckyPair(){
     let a = randNum(), b = randNum();
     while (b === a) b = randNum();
@@ -895,14 +1075,14 @@
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  // Schrittweite für die Zufalls-Generierung der Timer-Dauer: je größer der
-  // maximale Bereich, desto größer die Schritte (keine Sekundensprünge bei
-  // langen Timern wie dem Wearable_Timer).
+  // Step size for randomising timer duration: the bigger the maximum range,
+  // the bigger the steps (no second-by-second jumps for long timers like
+  // the Wearable_Timer).
   function timerStepSeconds(maxSeconds){
-    if (maxSeconds <= 300) return 5;     // bis 5 Min: 5-Sekunden-Schritte
-    if (maxSeconds <= 600) return 10;    // bis 10 Min: 10-Sekunden-Schritte
-    if (maxSeconds <= 3600) return 30;   // bis 1 Std: 30-Sekunden-Schritte
-    return 300;                           // darüber: 5-Minuten-Schritte
+    if (maxSeconds <= 300) return 5;     // up to 5 min: 5-second steps
+    if (maxSeconds <= 600) return 10;    // up to 10 min: 10-second steps
+    if (maxSeconds <= 3600) return 30;   // up to 1 h: 30-second steps
+    return 300;                           // above that: 5-minute steps
   }
 
   function randomTimerSeconds(minSeconds, maxSeconds){
@@ -913,17 +1093,19 @@
     return (minSteps + Math.floor(Math.random() * span)) * step;
   }
 
-  // Wählt für den aktuellen Modus eine Challenge. Bei Weekly Secret eine
-  // einfache Liste, bei Oral/Anal Training erst zufällig eine Kategorie,
-  // dann einen Eintrag daraus — inkl. sofort ausgewürfelter Anzahl/Dauer.
+  // Picks a challenge for the current mode. Weekly Secret uses its flat
+  // list; Oral/Anal Training first pick a random category, then an entry
+  // from it — including immediately rolled count/duration. Only an index
+  // is stored (not the literal text) so the label can be resolved in
+  // whichever language is active, including after a language switch.
   function pickChallengeEntry(modeKey){
     const mode = MODES[modeKey];
     if (mode && mode.categories){
       const catKeys = Object.keys(mode.categories);
       const catKey = catKeys[Math.floor(Math.random() * catKeys.length)];
       const cat = mode.categories[catKey];
-      const label = cat.items[Math.floor(Math.random() * cat.items.length)];
-      const entry = { label, category: catKey };
+      const idx = Math.floor(Math.random() * cat.items.en.length);
+      const entry = { category: catKey, idx };
       if (cat.min !== undefined){
         entry.min = cat.min;
         entry.max = cat.max;
@@ -937,7 +1119,26 @@
       return entry;
     }
     const items = (mode && mode.challenges) || CHALLENGES_WEEKLY;
-    return { label: items[Math.floor(Math.random() * items.length)], category: null };
+    const idx = Math.floor(Math.random() * items.en.length);
+    return { category: null, idx };
+  }
+
+  // Resolves an entry's label in the current language. Falls back to
+  // English, and to a legacy literal "label" field for states saved by an
+  // older version of this file (before challenges were stored by index).
+  function challengeLabel(modeKey, entry){
+    if (!entry) return "";
+    const mode = MODES[modeKey];
+    let itemsDict;
+    if (entry.category && mode && mode.categories && mode.categories[entry.category]){
+      itemsDict = mode.categories[entry.category].items;
+    } else {
+      itemsDict = (mode && mode.challenges) || CHALLENGES_WEEKLY;
+    }
+    const arr = itemsDict[currentLang] || itemsDict.en;
+    if (entry.idx !== undefined && arr && arr[entry.idx] !== undefined) return arr[entry.idx];
+    if (entry.label) return entry.label; // legacy fallback
+    return "";
   }
 
   function randomChallengeSet(){
@@ -971,9 +1172,9 @@
   function upIndex(state){ return state.challenge.length ? state.n2 : -1; }
   function downIndex(state){ return state.n3; }
 
-  // Alte gespeicherte Stände (vor der Kategorien-Umstellung) hatten
-  // state.challenge als Array aus reinen Strings. Hier auf das neue
-  // Objekt-Format { label, category, ... } heben, damit nichts bricht.
+  // Older saved states (before the categories change) had state.challenge
+  // as an array of plain strings. Lift those to the new object format so
+  // nothing breaks.
   function normalizeDayState(state){
     if (state && Array.isArray(state.challenge)){
       state.challenge = state.challenge.map(entry =>
@@ -983,33 +1184,44 @@
     return state;
   }
 
-  // ---- Day tabs & results ----
+  // ---- Day tabs (display only — no longer clickable) & results ----
   const daybar = document.getElementById("daybar");
   DAYS.forEach(d => {
     const btn = document.createElement("button");
+    btn.type = "button";
     btn.className = "day-btn";
-    btn.textContent = d.label;
+    btn.tabIndex = -1;
+    btn.setAttribute("aria-hidden", "true");
+    btn.textContent = dayLabel(d.key);
     btn.dataset.key = d.key;
-    btn.addEventListener("click", () => loadDay(d.key));
     daybar.appendChild(btn);
   });
 
-  function loadDay(key){
-    currentDay = key;
-    dayStates[key] = generateState();
-    document.querySelectorAll(".day-btn").forEach(b => {
-      b.classList.toggle("active", b.dataset.key === key);
-    });
-    document.getElementById("challengePanel").style.display = "block";
-    renderCurrentDay();
-    renderCalendar();
-    saveState();
+  function rerollsLeftToday(){
+    return Math.max(0, MAX_REROLLS_PER_DAY - (rerollCounts[currentTodayKey()] || 0));
+  }
+
+  // No reroll once today was marked (Done/Fail/X), once the challenge is
+  // finished, or once both rerolls of the day are used up.
+  function rerollLocked(){
+    return !!calMarks[currentTodayKey()] || computeCounter() <= 0 || rerollsLeftToday() <= 0;
+  }
+
+  function refreshRerollButton(){
+    const btn = document.getElementById("rerollBtn");
+    if (!btn) return;
+    btn.textContent = `${t("reroll")} (${t("rerollCost")}) · ${rerollsLeftToday()}/${MAX_REROLLS_PER_DAY}`;
+    btn.disabled = rerollLocked();
   }
 
   function reroll(){
-    if (!currentDay) return;
+    if (!currentDay || rerollLocked()) return;
+    const rKey = currentTodayKey();
+    rerollCounts[rKey] = (rerollCounts[rKey] || 0) + 1;
+    rerollPenalty += 1;
     const keepLuckyPair = dayStates[currentDay] ? dayStates[currentDay].luckyPair : null;
     dayStates[currentDay] = generateState(keepLuckyPair);
+    timerState = null;
     renderCurrentDay();
     renderCalendar();
     saveState();
@@ -1026,6 +1238,9 @@
   function renderResult(day, state){
     const panel = document.getElementById("resultPanel");
     const isLucky = state.isLucky;
+    const hintText = state.hasDouble
+      ? t("twoNumbersMatch")
+      : `${t("luckyNumbersForPrefix")} ${dayLabel(day.key)}: ${state.luckyPair.join(" & ")} ${t("allOthersUnlucky")}`;
     panel.innerHTML = `
       <div class="status-row">
         <span class="status-badge ${isLucky ? "lucky" : "unlucky"}">${isLucky ? "Lucky" : "Unlucky"}</span>
@@ -1035,12 +1250,11 @@
         <div class="num-chip">${state.n2}</div>
         <div class="num-chip">${state.n3}</div>
       </div>
-      <div class="hint">${state.hasDouble
-        ? "Zwei Zahlen sind gleich → automatisch unlucky"
-        : `Lucky-Zahlen für ${day.label}: ${state.luckyPair.join(" & ")} · alle anderen sind unlucky`}</div>
-      <button class="reroll" id="rerollBtn">Neu würfeln</button>
+      <div class="hint">${hintText}</div>
+      <button class="reroll" id="rerollBtn">${t("reroll")}</button>
     `;
     document.getElementById("rerollBtn").addEventListener("click", reroll);
+    refreshRerollButton();
   }
 
   function renderChallenge(state){
@@ -1048,7 +1262,7 @@
     list.innerHTML = "";
 
     if (state.isLucky){
-      list.innerHTML = `<div class="empty-state">Keine Challenge heute</div>`;
+      list.innerHTML = `<div class="empty-state">${t("noChallengeToday")}</div>`;
       return;
     }
 
@@ -1059,17 +1273,18 @@
       row.className = "challenge-row";
       if (i === up) row.classList.add("up");
       else if (i === down) row.classList.add("down");
-      row.innerHTML = `<span class="c-num">${i}</span><span class="c-label">${entry.label}</span>`;
+      row.innerHTML = `<span class="c-num">${i}</span><span class="c-label">${challengeLabel(currentMode, entry)}</span>`;
       list.appendChild(row);
     });
   }
 
-  // ---- Challenge-Ablauf: Anzahl / Timer / Done-Fail-X ----
+  // ---- Challenge flow: count / timer / done-fail-x ----
   let activeChallengeEntry = null;
-  let timerInterval = null;
+  let timerTickInterval = null;
+  let timerState = null; // { dateKey, total, remaining, running, lastTimestamp }
 
-  function clearChallengeTimer(){
-    if (timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  function clearChallengeTimerInterval(){
+    if (timerTickInterval){ clearInterval(timerTickInterval); timerTickInterval = null; }
   }
 
   function hideAllFlowBlocks(){
@@ -1087,13 +1302,75 @@
     return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
   }
 
-  // Sobald eine Challenge da ist (nicht lucky), erscheint darunter je nach
-  // Kategorie: Anzahl-Generator, Timer, oder direkt Done/Fail/X.
+  function currentTodayKey(){ return dateKey(today.getFullYear(), today.getMonth(), today.getDate()); }
+
+  // The timer is persisted with absolute timestamps (not just a countdown
+  // in memory), so time keeps passing correctly even if the tab or the
+  // whole browser was closed while it was running.
+  function computeCurrentRemaining(){
+    if (!timerState) return 0;
+    if (timerState.running && timerState.lastTimestamp){
+      const elapsed = Math.floor((Date.now() - timerState.lastTimestamp) / 1000);
+      return Math.max(0, timerState.remaining - elapsed);
+    }
+    return Math.max(0, timerState.remaining);
+  }
+
+  function renderTimerDisplay(){
+    if (!timerState) return;
+    const remaining = computeCurrentRemaining();
+    document.getElementById("timerValue").textContent = formatTimer(remaining);
+    clearChallengeTimerInterval();
+    if (remaining <= 0){
+      finishTimer();
+      return;
+    }
+    const btn = document.getElementById("startTimerBtn");
+    btn.disabled = false;
+    btn.textContent = timerState.running
+      ? t("timerPause")
+      : (timerState.remaining < timerState.total ? t("timerResume") : t("timerStart"));
+    if (timerState.running){
+      timerTickInterval = setInterval(() => {
+        const r = computeCurrentRemaining();
+        document.getElementById("timerValue").textContent = formatTimer(r);
+        if (r <= 0) finishTimer();
+      }, 1000);
+    }
+  }
+
+  function finishTimer(){
+    clearChallengeTimerInterval();
+    if (timerState){ timerState.running = false; timerState.remaining = 0; }
+    saveState();
+    document.getElementById("timerValue").textContent = "00:00";
+    document.getElementById("challengeTimerBlock").hidden = true;
+    document.getElementById("challengeDoneBlock").hidden = false;
+  }
+
+  function toggleTimer(){
+    if (!timerState) return;
+    if (computeCurrentRemaining() <= 0) return;
+    if (timerState.running){
+      timerState.remaining = computeCurrentRemaining();
+      timerState.running = false;
+      timerState.lastTimestamp = null;
+    } else {
+      timerState.running = true;
+      timerState.lastTimestamp = Date.now();
+    }
+    saveState();
+    renderTimerDisplay();
+  }
+  document.getElementById("startTimerBtn").addEventListener("click", toggleTimer);
+
+  // Once there's a (non-lucky) challenge, a count generator, a timer, or
+  // straight to Done/Fail/X appears below it, depending on the category.
   function startChallengeFlow(state){
-    clearChallengeTimer();
+    clearChallengeTimerInterval();
     hideAllFlowBlocks();
     activeChallengeEntry = null;
-    if (!state || state.isLucky) return;
+    if (!state || state.isLucky){ timerState = null; return; }
 
     const up = upIndex(state);
     const entry = state.challenge[up];
@@ -1106,12 +1383,14 @@
       document.getElementById("countValue").textContent = entry.rolledCount;
       document.getElementById("challengeCountBlock").hidden = false;
     } else if (entry.category !== null && entry.minSeconds !== undefined){
-      document.getElementById("timerValue").textContent = formatTimer(entry.rolledSeconds);
-      const btn = document.getElementById("startTimerBtn");
-      btn.disabled = false;
-      btn.textContent = "Timer starten";
+      const todayKey = currentTodayKey();
+      if (!(timerState && timerState.dateKey === todayKey && timerState.total === entry.rolledSeconds)){
+        timerState = { dateKey: todayKey, total: entry.rolledSeconds, remaining: entry.rolledSeconds, running: false, lastTimestamp: null };
+      }
       document.getElementById("challengeTimerBlock").hidden = false;
+      renderTimerDisplay();
     } else {
+      timerState = null;
       document.getElementById("challengeDoneBlock").hidden = false;
     }
   }
@@ -1121,38 +1400,20 @@
     document.getElementById("challengeDoneBlock").hidden = false;
   });
 
-  document.getElementById("startTimerBtn").addEventListener("click", () => {
-    if (!activeChallengeEntry || activeChallengeEntry.rolledSeconds === undefined) return;
-    let remaining = activeChallengeEntry.rolledSeconds;
-    const btn = document.getElementById("startTimerBtn");
-    btn.disabled = true;
-    btn.textContent = "Läuft…";
-    clearChallengeTimer();
-    timerInterval = setInterval(() => {
-      remaining--;
-      if (remaining <= 0){
-        clearChallengeTimer();
-        document.getElementById("timerValue").textContent = "00:00";
-        document.getElementById("challengeTimerBlock").hidden = true;
-        document.getElementById("challengeDoneBlock").hidden = false;
-        return;
-      }
-      document.getElementById("timerValue").textContent = formatTimer(remaining);
-    }, 1000);
-  });
-
   document.querySelectorAll("#challengeDoneBlock .mark-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       setTodayMark(btn.dataset.mark);
+      timerState = null;
+      clearChallengeTimerInterval();
       hideAllFlowBlocks();
+      saveState();
     });
   });
 
-  // Markiert den heutigen Tag im Kalender des aktuellen Modus. Das ist jetzt
-  // der einzige Weg, den Kalender zu markieren — direktes Antippen der
-  // Kalenderzellen ist deaktiviert.
+  // Marks today in the current mode's calendar. This remains the only way
+  // to mark the calendar — tapping calendar cells directly stays disabled.
   function setTodayMark(mark){
-    const key = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+    const key = currentTodayKey();
     calMarks[key] = mark;
     calChallenges[key] = challengeLabelForDateKey(key);
     renderCalendar();
@@ -1161,10 +1422,8 @@
 
   // ---- Calendar ----
   const calMarks = {}; // "YYYY-MM-DD" -> "X" | "F" | "D"
-  const calChallenges = {}; // "YYYY-MM-DD" -> eingefrorene Challenge, sobald "D" gesetzt wurde
-  let calChallengesOpen = true; // Monatsliste der Challenges ein-/ausgeklappt
-  const MONTH_NAMES = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
-  const DOW_LABELS = ["Mo","Di","Mi","Do","Fr","Sa","So"];
+  const calChallenges = {}; // "YYYY-MM-DD" -> frozen challenge label, once "D" was set
+  let calChallengesOpen = true; // month's challenge list expanded/collapsed
 
   const today = new Date();
   let calYear = today.getFullYear();
@@ -1185,9 +1444,6 @@
     return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
   }
 
-  // Kalenderzellen werden nur noch über das Done/Fail/X-Fenster markiert
-  // (siehe setTodayMark), nicht mehr per direktem Antippen.
-
   function challengeLabelForDateKey(key){
     const [y, m, d] = key.split("-").map(Number);
     const dayDef = DAY_BY_JSIDX[new Date(y, m - 1, d).getDay()];
@@ -1196,14 +1452,17 @@
 
   function challengeSummaryForState(state){
     if (!state) return null;
-    if (state.isLucky) return "Keine Challenge heute";
+    if (state.isLucky) return t("noChallengeToday");
     const up = upIndex(state);
     const entry = state.challenge[up];
-    return entry ? entry.label : null;
+    return entry ? challengeLabel(currentMode, entry) : null;
   }
 
-  // ---- Zähler (counter) ----
+  // ---- Counter ----
   let COUNTER_START = 15;
+  let rerollPenalty = 0;   // +1 day on the counter per reroll (reset with a new challenge)
+  const rerollCounts = {}; // "YYYY-MM-DD" -> number of rerolls used that day
+  const MAX_REROLLS_PER_DAY = 2;
 
   function dayIndexFromKey(key){
     // Days since epoch, for consecutive-day comparisons
@@ -1232,24 +1491,18 @@
     const dContribution = streakContribution(dKeys, -1, -2);
     // F: +1 per day, +2 per day once more than 3 F-days in a row
     const fContribution = streakContribution(fKeys, 1, 2);
-    return COUNTER_START + dContribution + fContribution;
+    return COUNTER_START + dContribution + fContribution + rerollPenalty;
   }
 
-  const newChallengeDaysInput = document.getElementById("newChallengeDays");
-  const newChallengeDaysLabel = document.getElementById("newChallengeDaysLabel");
-  newChallengeDaysInput.addEventListener("input", () => {
-    newChallengeDaysLabel.textContent = `${newChallengeDaysInput.value} Tage`;
-  });
+  // A finished challenge can only be followed by a new one: the length is
+  // drawn on the counter-reveal screen (3–30 days), never chosen by hand.
   document.getElementById("startNewChallengeBtn").addEventListener("click", () => {
-    COUNTER_START = Number(newChallengeDaysInput.value);
-    Object.keys(calMarks).forEach(k => delete calMarks[k]);
-    Object.keys(calChallenges).forEach(k => delete calChallenges[k]);
-    renderCalendar();
-    saveState();
+    startCounterReveal(currentMode, true);
   });
 
   function renderCounter(){
     const value = computeCounter();
+    refreshRerollButton();
     const wrap = document.getElementById("counterWrap");
     const done = document.getElementById("counterDone");
     if (value <= 0){
@@ -1267,10 +1520,11 @@
   }
 
   function renderCalendar(){
-    document.getElementById("calMonthLabel").textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+    document.getElementById("calMonthLabel").textContent = `${monthNames()[calMonth]} ${calYear}`;
     const grid = document.getElementById("calGrid");
     grid.innerHTML = "";
 
+    const DOW_LABELS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(k => dayLabel(k));
     DOW_LABELS.forEach(l => {
       const el = document.createElement("div");
       el.className = "cal-dow";
@@ -1290,7 +1544,7 @@
       grid.appendChild(blank);
     }
 
-    const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayKey = currentTodayKey();
 
     for (let d = 1; d <= daysInMonth; d++){
       const key = dateKey(calYear, calMonth, d);
@@ -1323,7 +1577,7 @@
     toggle.type = "button";
     toggle.className = "cal-challenge-toggle";
     toggle.setAttribute("aria-expanded", String(calChallengesOpen));
-    toggle.innerHTML = `<span>Challenges im ${MONTH_NAMES[calMonth]} (${dEntries.length})</span><span class="chev">▾</span>`;
+    toggle.innerHTML = `<span>${t("challengesInPrefix")} ${monthNames()[calMonth]} (${dEntries.length})</span><span class="chev">▾</span>`;
     const body = document.createElement("div");
     body.className = "cal-challenge-body";
     body.hidden = !calChallengesOpen;
@@ -1343,31 +1597,31 @@
       const state = dayStates[dayDef.key];
       const item = document.createElement("div");
       item.className = "cal-challenge-item";
-      const dateLabel = `${d}. ${MONTH_NAMES[m-1].slice(0,3)}`;
-      // eingefrorene Challenge hat Vorrang vor dem aktuellen Tageszustand
-      const challengeLabel = calChallenges[key] || challengeSummaryForState(state);
-      item.innerHTML = `<span>${dateLabel} <b>(${dayDef.label})</b></span><span>${challengeLabel ? "<b>" + challengeLabel + "</b>" : "noch nicht geladen"}</span>`;
+      const dateLabel = `${d}. ${monthNames()[m-1].slice(0,3)}`;
+      // a frozen challenge (from when "D" was set) takes priority over the live day state
+      const challengeLbl = calChallenges[key] || challengeSummaryForState(state);
+      item.innerHTML = `<span>${dateLabel} <b>(${dayLabel(dayDef.key)})</b></span><span>${challengeLbl ? "<b>" + challengeLbl + "</b>" : t("notLoadedYet")}</span>`;
       body.appendChild(item);
     });
   }
 
   // ---- Persistence (this browser / this device only) ----
-  // Jeder Modus wird komplett unabhängig unter seinem eigenen Key gespeichert.
+  // Each mode is stored completely independently under its own key.
   const MODES = {
-    weekly: { label: "Weekly Secret",  storageKey: "weeklySecret_v1",    abbr: "WS", subtitle: "Bist du heute lucky?", challenges: CHALLENGES_WEEKLY },
-    b1:     { label: "Oral Training",  storageKey: "weeklySecret_v1_b1", abbr: "OT", subtitle: "MMMPHH", categories: CHALLENGES_B1 },
-    b2:     { label: "Anal Training",  storageKey: "weeklySecret_v1_b2", abbr: "AT", subtitle: "Train hard", categories: CHALLENGES_B2 },
+    weekly: { label: { en:"Weekly Secret", de:"Weekly Secret" }, subtitle: { en:"Are you lucky today?", de:"Bist du heute im Glück?" }, storageKey: "weeklySecret_v1", abbr: "WS", challenges: CHALLENGES_WEEKLY },
+    b1:     { label: { en:"Oral Training", de:"Oral Training" }, subtitle: { en:"Mmmph~", de:"Mmmpf~" }, storageKey: "weeklySecret_v1_b1", abbr: "OT", categories: CHALLENGES_B1 },
+    b2:     { label: { en:"Anal Training", de:"Anal Training" }, subtitle: { en:"Train hard", de:"Hart trainieren" }, storageKey: "weeklySecret_v1_b2", abbr: "AT", categories: CHALLENGES_B2 },
   };
   let currentMode = null;
   let currentStorageKey = MODES.weekly.storageKey;
 
   function saveState(){
     try{
-      const payload = { dayStates, currentDay, calMarks, calChallenges, calChallengesOpen, counterStart: COUNTER_START };
+      const payload = { dayStates, currentDay, calMarks, calChallenges, calChallengesOpen, counterStart: COUNTER_START, timerState, rerollCounts, rerollPenalty };
       localStorage.setItem(currentStorageKey, JSON.stringify(payload));
     } catch (e){
       // storage unavailable (private mode, quota, etc.) — app still works, just won't persist
-      console.warn("Konnte nicht speichern:", e);
+      console.warn("Could not save:", e);
     }
   }
 
@@ -1377,7 +1631,7 @@
       if (!raw) return null;
       return JSON.parse(raw);
     } catch (e){
-      console.warn("Konnte gespeicherten Stand nicht laden:", e);
+      console.warn("Could not load saved state:", e);
       return null;
     }
   }
@@ -1389,11 +1643,21 @@
     currentDay = null;
     calChallengesOpen = true;
     COUNTER_START = 15;
+    rerollPenalty = 0;
+    Object.keys(rerollCounts).forEach(k => delete rerollCounts[k]);
+    timerState = null;
   }
 
-  // Lädt die Daten eines Modus und zeigt dessen UI an. Jeder Modus hat
-  // seinen eigenen Kalender, eigene Challenges und eigenen Zähler.
-  function applyMode(modeKey){
+  function hasSavedCounter(modeKey){
+    const saved = loadStateFromKey(MODES[modeKey].storageKey);
+    return !!(saved && typeof saved.counterStart === "number");
+  }
+
+  // Loads a mode's data and shows its UI. Each mode has its own calendar,
+  // its own challenges and its own counter. `forcedCounterStart` is only
+  // used the very first time a mode is played (no saved counter yet) —
+  // it's the number rolled on the counter-reveal screen.
+  function applyMode(modeKey, forcedCounterStart){
     if (!MODES[modeKey]) modeKey = "weekly";
     currentMode = modeKey;
     currentStorageKey = MODES[modeKey].storageKey;
@@ -1406,13 +1670,24 @@
     if (saved && saved.calMarks) Object.assign(calMarks, saved.calMarks);
     if (saved && saved.calChallenges) Object.assign(calChallenges, saved.calChallenges);
     if (saved && typeof saved.calChallengesOpen === "boolean") calChallengesOpen = saved.calChallengesOpen;
-    // bereits vorhandene D-Einträge ohne festgehaltene Challenge: jetzt festhalten
+    // existing "D" entries without a frozen challenge: freeze one now
     Object.keys(calMarks).forEach(k => {
       if (calMarks[k] === "D" && !calChallenges[k]) calChallenges[k] = challengeLabelForDateKey(k);
     });
-    if (saved && typeof saved.counterStart === "number") COUNTER_START = saved.counterStart;
-    newChallengeDaysInput.value = COUNTER_START;
-    newChallengeDaysLabel.textContent = `${COUNTER_START} Tage`;
+    if (saved && saved.rerollCounts) Object.assign(rerollCounts, saved.rerollCounts);
+    if (saved && typeof saved.rerollPenalty === "number") rerollPenalty = saved.rerollPenalty;
+    if (saved && typeof saved.counterStart === "number") {
+      COUNTER_START = saved.counterStart;
+    } else if (typeof forcedCounterStart === "number") {
+      COUNTER_START = forcedCounterStart;
+    }
+
+    const todayKey = currentTodayKey();
+    if (saved && saved.timerState && saved.timerState.dateKey === todayKey){
+      timerState = saved.timerState;
+    } else {
+      timerState = null;
+    }
 
     document.getElementById("challengePanel").style.display = "none";
     const todayDayDef = DAY_BY_JSIDX[today.getDay()];
@@ -1428,36 +1703,103 @@
     renderCalendar();
     saveState();
 
-    // UI umschalten: Oral Training, Weekly Secret & Anal Training teilen
-    // sich alle dasselbe Overlay (Zahlengenerator, Zähler, Kalender).
-    document.getElementById("appTitle").textContent = MODES[modeKey].label;
-    document.getElementById("appSubtitle").textContent = MODES[modeKey].subtitle;
+    // Switch the UI: Oral Training, Weekly Secret & Anal Training all
+    // share the same overlay (number generator, counter, calendar).
+    document.getElementById("appTitle").textContent = MODES[modeKey].label[currentLang];
+    document.getElementById("appSubtitle").textContent = MODES[modeKey].subtitle[currentLang];
     document.getElementById("weeklyUI").hidden = false;
     document.getElementById("placeholderUI").hidden = true;
     document.querySelectorAll(".mode-switch-btn").forEach(b => {
       b.classList.toggle("active", b.dataset.mode === modeKey);
     });
 
+    document.getElementById("explanationScreen").hidden = true;
     document.getElementById("modeSelectScreen").hidden = true;
+    document.getElementById("counterRevealScreen").hidden = true;
     document.getElementById("mainScreen").hidden = false;
   }
 
+  // ---- Counter reveal (own screen, random 3–30 days) ----
+  let pendingRevealMode = null;
+  let pendingRevealValue = null;
+  let pendingRevealIsNew = false; // true = new challenge after a finished one
+  let revealAnimInterval = null;
+
+  function startCounterReveal(modeKey, isNewChallenge){
+    pendingRevealMode = modeKey;
+    pendingRevealIsNew = !!isNewChallenge;
+    pendingRevealValue = randomInt(3, 30);
+    document.getElementById("modeSelectScreen").hidden = true;
+    document.getElementById("mainScreen").hidden = true;
+    document.getElementById("counterRevealScreen").hidden = false;
+    const valueEl = document.getElementById("revealValue");
+    const confirmBtn = document.getElementById("counterRevealConfirmBtn");
+    confirmBtn.disabled = true;
+    let ticks = 0;
+    clearInterval(revealAnimInterval);
+    revealAnimInterval = setInterval(() => {
+      ticks++;
+      if (ticks < 14){
+        valueEl.textContent = randomInt(3, 30);
+      } else {
+        clearInterval(revealAnimInterval);
+        valueEl.textContent = pendingRevealValue;
+        confirmBtn.disabled = false;
+      }
+    }, 80);
+  }
+
+  document.getElementById("counterRevealConfirmBtn").addEventListener("click", () => {
+    if (pendingRevealMode === null) return;
+    if (pendingRevealIsNew){
+      // start over: new length, empty calendar, no reroll penalty
+      COUNTER_START = pendingRevealValue;
+      rerollPenalty = 0;
+      Object.keys(calMarks).forEach(k => delete calMarks[k]);
+      Object.keys(calChallenges).forEach(k => delete calChallenges[k]);
+      saveState();
+    }
+    applyMode(pendingRevealMode, pendingRevealValue);
+    pendingRevealMode = null;
+    pendingRevealValue = null;
+    pendingRevealIsNew = false;
+  });
+
   document.querySelectorAll(".mode-select-btn").forEach(btn => {
-    btn.addEventListener("click", () => applyMode(btn.dataset.mode));
+    btn.addEventListener("click", () => {
+      const modeKey = btn.dataset.mode;
+      if (hasSavedCounter(modeKey)){
+        applyMode(modeKey);
+      } else {
+        startCounterReveal(modeKey);
+      }
+    });
   });
 
   const modeSwitchRow = document.getElementById("modeSwitchRow");
-  Object.keys(MODES).forEach(key => {
+  // Modes are no longer picked in the settings: one button sends the person
+  // back to the mode selection window (the one after the explanation).
+  function goToModeSelect(){
+    clearChallengeTimerInterval();
+    saveState();
+    const sp = document.getElementById("settingsPanel");
+    if (sp) sp.hidden = true;
+    document.getElementById("settingsBtn").setAttribute("aria-expanded", "false");
+    document.getElementById("mainScreen").hidden = true;
+    document.getElementById("modeSelectScreen").hidden = false;
+  }
+  function buildModeSwitchRow(){
+    modeSwitchRow.innerHTML = "";
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "theme-btn mode-switch-btn";
-    btn.dataset.mode = key;
-    btn.textContent = MODES[key].label;
-    btn.addEventListener("click", () => applyMode(key));
+    btn.className = "theme-btn";
+    btn.textContent = currentLang === "de" ? "Zur Modusauswahl" : "Go to mode selection";
+    btn.addEventListener("click", goToModeSelect);
     modeSwitchRow.appendChild(btn);
-  });
+  }
+  buildModeSwitchRow();
 
-  // ---- Allgemeiner Kalender (schreibgeschützt, Klappfenster in den Einstellungen) ----
+  // ---- General calendar (read-only, collapsible panel in settings) ----
   let ovYear = today.getFullYear();
   let ovMonth = today.getMonth();
   const OVERVIEW_KEY = "weeklySecret_overviewModes";
@@ -1486,7 +1828,7 @@
         renderOverviewCalendar();
       });
       label.appendChild(cb);
-      label.appendChild(document.createTextNode(MODES[key].label));
+      label.appendChild(document.createTextNode(MODES[key].label[currentLang]));
       wrap.appendChild(label);
     });
   }
@@ -1501,10 +1843,11 @@
   });
 
   function renderOverviewCalendar(){
-    document.getElementById("ovMonthLabel").textContent = `${MONTH_NAMES[ovMonth]} ${ovYear}`;
+    document.getElementById("ovMonthLabel").textContent = `${monthNames()[ovMonth]} ${ovYear}`;
     const grid = document.getElementById("ovGrid");
     grid.innerHTML = "";
 
+    const DOW_LABELS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(k => dayLabel(k));
     DOW_LABELS.forEach(l => {
       const el = document.createElement("div");
       el.className = "cal-dow";
@@ -1523,14 +1866,14 @@
       grid.appendChild(blank);
     }
 
-    // Daten aller gewählten Modi read-only aus dem Speicher laden
+    // Read all selected modes' saved data (read-only)
     const modeData = {};
     Object.keys(MODES).forEach(key => {
       if (!overviewModes[key]) return;
       modeData[key] = loadStateFromKey(MODES[key].storageKey) || {};
     });
 
-    const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayKey = currentTodayKey();
     const entries = [];
 
     for (let d = 1; d <= daysInMonth; d++){
@@ -1556,9 +1899,9 @@
     }
 
     document.getElementById("ovLegend").innerHTML = `
-      <span><b class="legend-d">D</b> Done</span>
-      <span><b class="legend-f">F</b> Fail</span>
-      <span><b class="legend-x">X</b> nicht möglich</span>
+      <span><b class="legend-d">D</b> ${t("wordDone")}</span>
+      <span><b class="legend-f">F</b> ${t("wordFail")}</span>
+      <span><b class="legend-x">X</b> ${t("wordNotPossible")}</span>
     `;
 
     const list = document.getElementById("ovList");
@@ -1566,16 +1909,16 @@
     if (entries.length === 0){
       const empty = document.createElement("div");
       empty.className = "cal-challenge-empty";
-      empty.textContent = "Keine Einträge in diesem Monat";
+      empty.textContent = t("noEntriesThisMonth");
       list.appendChild(empty);
     } else {
       entries.sort((a, b) => a.day - b.day);
       entries.forEach(e => {
         const item = document.createElement("div");
         item.className = "cal-challenge-item";
-        const dateLabel = `${e.day}. ${MONTH_NAMES[ovMonth].slice(0,3)}`;
-        const challengeLabel = (e.mark === "D" && e.challenge) ? ` – ${e.challenge}` : "";
-        item.innerHTML = `<span>${dateLabel} <b>(${MODES[e.modeKey].label})</b></span><span><b>${e.mark}</b>${challengeLabel}</span>`;
+        const dateLabel = `${e.day}. ${monthNames()[ovMonth].slice(0,3)}`;
+        const challengeLbl = (e.mark === "D" && e.challenge) ? ` – ${e.challenge}` : "";
+        item.innerHTML = `<span>${dateLabel} <b>(${MODES[e.modeKey].label[currentLang]})</b></span><span><b>${e.mark}</b>${challengeLbl}</span>`;
         list.appendChild(item);
       });
     }
@@ -1593,17 +1936,74 @@
     }
   });
 
-  // ---- Einstellungen & Themes ----
+  // ---- Language dropdown (settings) ----
+  const langToggle = document.getElementById("langToggle");
+  const langBody = document.getElementById("langBody");
+  const langRow = document.getElementById("langRow");
+
+  function buildLangRow(){
+    langRow.innerHTML = "";
+    LANGS.forEach(l => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "theme-btn lang-btn";
+      btn.dataset.lang = l.code;
+      btn.textContent = l.nativeName;
+      btn.classList.toggle("active", l.code === currentLang);
+      btn.addEventListener("click", () => applyLanguage(l.code));
+      langRow.appendChild(btn);
+    });
+  }
+  buildLangRow();
+
+  langToggle.addEventListener("click", () => {
+    const willOpen = langBody.hidden;
+    langBody.hidden = !willOpen;
+    langToggle.setAttribute("aria-expanded", String(willOpen));
+  });
+
+  function applyLanguage(lang){
+    if (lang !== "en" && lang !== "de") lang = "en";
+    currentLang = lang;
+    try{ localStorage.setItem(LANG_KEY, lang); } catch(e){}
+    document.documentElement.setAttribute("lang", lang);
+
+    refreshLangVisibility();
+    buildLangRow();
+    buildModeSwitchRow();
+
+    // Rebuild theme picker labels
+    Object.keys(THEMES).forEach(key => {
+      const b = themeRow.querySelector(`[data-theme="${key}"]`);
+      if (b) b.textContent = `${THEMES[key].emoji} ${THEMES[key].name[currentLang]}`;
+    });
+
+    // Day bar labels
+    document.querySelectorAll(".day-btn").forEach(b => { b.textContent = dayLabel(b.dataset.key); });
+
+    if (!document.getElementById("mainScreen").hidden && currentMode){
+      document.getElementById("appTitle").textContent = MODES[currentMode].label[currentLang];
+      document.getElementById("appSubtitle").textContent = MODES[currentMode].subtitle[currentLang];
+      renderCurrentDay();
+      renderCalendar();
+    }
+    if (!document.getElementById("overviewBody").hidden){
+      buildOverviewChecks();
+      renderOverviewCalendar();
+    }
+  }
+
+  // ---- Settings & themes ----
   const THEMES = {
-    flowers: { name: "Flowers", emoji: "🌸" },
-    ocean:   { name: "Ocean",   emoji: "🐳" },
-    honey:   { name: "Honey",   emoji: "🍯" },
+    flowers: { name: { en:"Flowers", de:"Blumen" }, emoji: "🌸" },
+    ocean:   { name: { en:"Ocean",   de:"Ozean"  }, emoji: "🐳" },
+    honey:   { name: { en:"Honey",   de:"Honig"  }, emoji: "🍯" },
   };
   const THEME_KEY = "weeklySecret_theme";
   let currentTheme = "flowers";
   try{
-    const t = localStorage.getItem(THEME_KEY);
-    if (THEMES[t]) currentTheme = t;
+    const t2 = localStorage.getItem(THEME_KEY);
+    if (THEMES[t2]) currentTheme = t2;
   } catch (e){}
 
   const themeRow = document.getElementById("themeRow");
@@ -1612,7 +2012,7 @@
     btn.type = "button";
     btn.className = "theme-btn";
     btn.dataset.theme = key;
-    btn.textContent = `${THEMES[key].emoji} ${THEMES[key].name}`;
+    btn.textContent = `${THEMES[key].emoji} ${THEMES[key].name[currentLang]}`;
     btn.addEventListener("click", () => applyTheme(key));
     themeRow.appendChild(btn);
   });
@@ -1639,6 +2039,42 @@
     settingsPanel.hidden = !willOpen;
     settingsBtn.setAttribute("aria-expanded", String(willOpen));
   });
+
+  // ---- Persist the running timer if the tab/browser is closed or hidden ----
+  function persistTimerNow(){
+    if (currentStorageKey) saveState();
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") persistTimerNow();
+  });
+  window.addEventListener("pagehide", persistTimerNow);
+  window.addEventListener("beforeunload", persistTimerNow);
+
+  // ---- Initial screen ----
+  document.documentElement.setAttribute("lang", currentLang);
+  refreshLangVisibility();
+
+  const EXPLAINED_KEY = "weeklySecret_explained";
+  function hasSeenExplanation(){
+    try{ return localStorage.getItem(EXPLAINED_KEY) === "1"; } catch(e){ return false; }
+  }
+  function markExplanationSeen(){
+    try{ localStorage.setItem(EXPLAINED_KEY, "1"); } catch(e){}
+  }
+
+  document.getElementById("explanationConfirmBtn").addEventListener("click", () => {
+    markExplanationSeen();
+    document.getElementById("explanationScreen").hidden = true;
+    document.getElementById("modeSelectScreen").hidden = false;
+  });
+
+  if (hasSeenExplanation()){
+    document.getElementById("explanationScreen").hidden = true;
+    document.getElementById("modeSelectScreen").hidden = false;
+  } else {
+    document.getElementById("explanationScreen").hidden = false;
+    document.getElementById("modeSelectScreen").hidden = true;
+  }
 </script>
 </body>
 </html>
