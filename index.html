@@ -254,6 +254,38 @@
     color: var(--heading);
     margin: 4px 0 4px;
   }
+  .flow-big-value.secret-timer{ font-size: calc(var(--fs-display) * 1.3); }
+
+  .lucky-reveal{
+    position: fixed;
+    inset: 0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: rgba(0,0,0,0.6);
+    z-index: 9999;
+    animation: luckyRevealFade 2.2s ease forwards;
+  }
+  .lucky-reveal-inner{ text-align:center; }
+  .lucky-reveal-label{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: var(--fs-heading);
+    color:#fff;
+    margin-bottom: 14px;
+  }
+  .lucky-reveal-numbers{
+    display:flex;
+    gap: 22px;
+    justify-content:center;
+  }
+  .lucky-reveal-numbers .num-chip{ font-size: calc(var(--fs-display) * 1.5); }
+  @keyframes luckyRevealFade{
+    0%{ opacity:0; transform: scale(0.85); }
+    12%{ opacity:1; transform: scale(1); }
+    82%{ opacity:1; transform: scale(1); }
+    100%{ opacity:0; transform: scale(1); }
+  }
   .flow-sub{
     font-size: var(--fs-text);
     color: var(--ink-soft);
@@ -692,12 +724,12 @@
         <div class="explain-block">
           <div class="explain-heading"><span class="t-en">How this works</span><span class="t-de" hidden>Wie das Ganze funktioniert</span></div>
           <div class="t-en">This is a little hub for a few different daily challenge games. You'll pick a mode next — each mode keeps its own independent calendar, streak counter and challenge history, so switching between modes never costs you progress in any of them.</div>
-          <div class="t-de" hidden>Das hier ist ein Sammelplatz für ein paar verschiedene tägliche Challenge-Spiele. Als nächstes wählst du einen Modus – jeder Modus hat seinen eigenen Kalender, Zähler und Challenge-Verlauf, du kannst also zwischen den Modi wechseln, ohne irgendwo Fortschritt zu verlieren.</div>
+          <div class="t-de" hidden>Das hier ist ein kleines Spiel für ein paar verschiedene tägliche Challenges. Als nächstes wählst du einen Modus – jeder Modus hat seinen eigenen Kalender, Zähler und Challenge-Verlauf, du kannst also zwischen den Modi wechseln, ohne irgendwo Fortschritt zu verlieren.</div>
         </div>
         <div class="explain-block">
           <div class="explain-heading"><span class="t-en">The daily roll</span><span class="t-de" hidden>Der tägliche Wurf</span></div>
-          <div class="t-en">Every day, three numbers between 0 and 6 are rolled. Two of them are your "lucky numbers" for that weekday. If the main number matches one of them (and no two of the three numbers are the same), the day is <b>Lucky</b> and there's no challenge. Otherwise the day is <b>Unlucky</b>, and a random challenge is picked for you — either a number of times to repeat something, or a timer to run.</div>
-          <div class="t-de" hidden>Jeden Tag werden drei Zahlen zwischen 0 und 6 gewürfelt. Zwei davon sind deine "Glückszahlen" für diesen Wochentag. Stimmt die Hauptzahl mit einer davon überein (und sind nicht zwei der drei Zahlen gleich), ist der Tag <b>Lucky</b> und es gibt keine Challenge. Sonst ist er <b>Unlucky</b>, und es wird eine zufällige Challenge für dich ausgewählt – entweder eine Anzahl an Wiederholungen oder ein Timer, den du laufen lässt.</div>
+          <div class="t-en">Every day, three numbers between 0 and 6 are rolled. Two of them are your "lucky numbers" for that weekday. If the main number matches one of them (and no two of the three numbers are the same), the day is <b>Lucky</b> and there's no challenge. Otherwise the day is <b>Unlucky</b>, and a random challenge is picked for you.</div>
+          <div class="t-de" hidden>Jeden Tag werden drei Zahlen zwischen 0 und 6 gewürfelt. Zwei davon sind deine "Glückszahlen" für diesen Wochentag. Stimmt die Hauptzahl mit einer davon überein (und sind nicht zwei der drei Zahlen gleich), ist der Tag <b>Lucky</b> und es gibt keine Challenge. Sonst ist er <b>Unlucky</b>, und es wird eine zufällige Challenge für dich ausgewählt.</div>
         </div>
         <div class="explain-block">
           <div class="explain-heading"><span class="t-en">Finishing a day</span><span class="t-de" hidden>Einen Tag abschließen</span></div>
@@ -712,16 +744,16 @@
         <div class="explain-block">
           <div class="explain-heading"><span class="t-en">The modes</span><span class="t-de" hidden>Die Spielmodi</span></div>
           <div class="mode-explain-item">
-            <span class="t-en"><b>👅 Oral Training — Mmmph~:</b> random oral-themed challenges, either a number of reps or a timed session.</span>
-            <span class="t-de" hidden><b>👅 Oral Training — Mmmpf~:</b> zufällige Challenges rund ums Orale, entweder eine Anzahl Wiederholungen oder eine Zeit-Session.</span>
+            <span class="t-en"><b>👅 Oral Training — Mmmph~:</b> random oral-themed challenges.</span>
+            <span class="t-de" hidden><b>👅 Oral Training — Mmmpf~:</b> zufällige Challenges rund um Blowjobs & Deepthroats.</span>
           </div>
           <div class="mode-explain-item">
-            <span class="t-en"><b>🩲 Weekly Secret — Are you lucky today?:</b> a lighter game about what you wear, decided by the daily roll.</span>
-            <span class="t-de" hidden><b>🩲 Weekly Secret — Bist du heute im Glück?:</b> ein leichteres Spiel darüber, was du trägst, entschieden durch den täglichen Wurf.</span>
+            <span class="t-en"><b>🩲 Weekly Secret — Are you lucky today?:</b> a lighter game about what you secretly wear under your clothes, decided by the daily roll.</span>
+            <span class="t-de" hidden><b>🩲 Weekly Secret — Hast du heute Glück?:</b> ein leichteres Spiel darüber, was du unter deiner Kleidung trägst, entschieden durch den täglichen Wurf.</span>
           </div>
           <div class="mode-explain-item">
             <span class="t-en"><b>🍑 Anal Training — Train hard:</b> the same system as Oral Training, with its own set of challenges (placeholders by default — add your own in the code).</span>
-            <span class="t-de" hidden><b>🍑 Anal Training — Hart trainieren:</b> das gleiche System wie Oral Training, mit eigenen Challenges (standardmäßig Platzhalter – trage im Code eigene ein).</span>
+            <span class="t-de" hidden><b>🍑 Anal Training — Tief trainieren:</b> das gleiche System wie Oral Training, mit eigenen Challenges.</span>
           </div>
         </div>
         <button class="reroll" id="explanationConfirmBtn" type="button" style="width:100%; margin-top:6px;">
@@ -742,14 +774,14 @@
         <span class="mode-select-emoji">👅</span>
         <span class="mode-select-text">
           <span class="mode-select-title">Oral Training</span>
-          <span class="mode-select-desc"><span class="t-en">Take it deep!</span><span class="t-de" hidden>Nimm's tief!</span></span>
+          <span class="mode-select-desc"><span class="t-en">Take it deep!</span><span class="t-de" hidden>Nimm ihn tief!</span></span>
         </span>
       </button>
       <button type="button" class="mode-select-btn" data-mode="weekly">
         <span class="mode-select-emoji">🩲</span>
         <span class="mode-select-text">
           <span class="mode-select-title">Weekly Secret</span>
-          <span class="mode-select-desc"><span class="t-en">Are you lucky today?</span><span class="t-de" hidden>Bist du heute im Glück?</span></span>
+          <span class="mode-select-desc"><span class="t-en">Are you lucky today?</span><span class="t-de" hidden>Hast du heute Glück?</span></span>
         </span>
       </button>
       <button type="button" class="mode-select-btn" data-mode="b2">
@@ -815,7 +847,7 @@
       <div class="settings-label" style="margin-top:18px;"><span class="t-en">General calendar</span><span class="t-de" hidden>Allgemeiner Kalender</span></div>
       <div class="overview-cal">
         <button type="button" class="cal-challenge-toggle" id="overviewToggle" aria-expanded="false">
-          <span><span class="t-en">Show calendar (read-only)</span><span class="t-de" hidden>Kalender anzeigen (schreibgeschützt)</span></span><span class="chev">▾</span>
+          <span><span class="t-en">Show general calendar</span><span class="t-de" hidden>Allgemeinen Kalender anzeigen</span></span><span class="chev">▾</span>
         </button>
         <div id="overviewBody" hidden>
           <div class="overview-mode-checks" id="overviewModeChecks"></div>
@@ -970,9 +1002,10 @@
       wordDone: "Done",
       wordFail: "Fail",
       wordNotPossible: "not possible",
+      luckyRevealLabel: "Today's lucky numbers",
     },
     de: {
-      twoNumbersMatch: "Zwei Zahlen sind gleich → automatisch unlucky",
+      twoNumbersMatch: "Zwei gleiche Zahlen → automatisch unlucky",
       luckyNumbersForPrefix: "Lucky-Zahlen für",
       allOthersUnlucky: "· alle anderen sind unlucky",
       reroll: "Neu würfeln",
@@ -987,6 +1020,7 @@
       wordDone: "Done",
       wordFail: "Fail",
       wordNotPossible: "nicht möglich",
+      luckyRevealLabel: "Deine Glückszahlen heute",
     },
   };
   function t(key){
@@ -1006,8 +1040,8 @@
 
   // Weekly Secret keeps a simple flat list (no categories).
   const CHALLENGES_WEEKLY = {
-    en: ["Normal", "Thong", "Thong worn underneath your clothes", "Lingerie + thong", "Lingerie + thong + knee highs"],
-    de: ["Normal", "String-Tanga", "String-Tanga unter der Kleidung", "Dessous + String", "Dessous + String + Kniestrümpfe"],
+    en: ["Normal", "Thong", "Thong worn underneath your boxershorts", "Lingerie + thong", "Lingerie + thong + knee highs"],
+    de: ["Normal", "String-Tanga", "String-Tanga unter der", "Dessous + String", "Dessous + String + Kniestrümpfe"],
   };
 
   // Oral & Anal Training: challenges are organised into categories.
@@ -1021,14 +1055,14 @@
       min: 1, max: 50,
       items: {
         en: ["Slow and deep", "Slow and shallow", "Fast and shallow", "Fast and deep", "Force into throat", "Deepthroat"],
-        de: ["Langsam und tief", "Langsam und flach", "Schnell und flach", "Schnell und tief", "In den Rachen zwingen", "Deepthroat"],
+        de: ["Langsam und tief", "Langsam und flach", "Schnell und flach", "Schnell und tief", "Tief in den Rachen", "Deepthroat"],
       },
     },
     timer: {
       minSeconds: 10, maxSeconds: 300, // 10 seconds – 5 minutes
       items: {
         en: ["Lick only the tip", "Lick the dildo all over", "Suck the tip while stroking it", "Deepthroat at 100 bpm"],
-        de: ["Nur die Spitze lecken", "Den Dildo überall ablecken", "Die Spitze lutschen, während er gestreichelt wird", "Deepthroat im 100-bpm-Takt"],
+        de: ["Nur die Spitze lecken", "Den Dildo überall ablecken", "Die Spitze lutschen, während er gestroked wird", "Deepthroat bei 100-bpm-Takt"],
       },
     },
   };
@@ -1141,6 +1175,10 @@
     return "";
   }
 
+  // Weekly Secret only: a random timer length (1-8h), generated together
+  // with the day's challenge and kept stable until the day is re-rolled.
+  function randomSecretHours(){ return Math.floor(Math.random() * 8) + 1; } // 1-8 inclusive
+
   function randomChallengeSet(){
     // Each of the 7 slots gets an independently random type, so counts
     // per type vary every time: some show up more often, some less, some not at all.
@@ -1158,7 +1196,7 @@
     let n3 = randNum();
     const hasDouble = (n1 === n2) || (n1 === n3) || (n2 === n3);
     const isLucky = hasDouble ? false : luckyPair.includes(n1);
-    return {
+    const state = {
       luckyPair,
       n1,
       n2,
@@ -1167,6 +1205,10 @@
       isLucky,
       challenge: randomChallengeSet(),
     };
+    if (currentMode === "weekly"){
+      state.secretHours = randomSecretHours();
+    }
+    return state;
   }
 
   function upIndex(state){ return state.challenge.length ? state.n2 : -1; }
@@ -1180,6 +1222,11 @@
       state.challenge = state.challenge.map(entry =>
         (typeof entry === "string") ? { label: entry, category: null } : entry
       );
+    }
+    // Older saved Weekly Secret states were created before time/place
+    // existed — backfill them so nothing breaks.
+    if (state && currentMode === "weekly"){
+      if (typeof state.secretHours !== "number") state.secretHours = randomSecretHours();
     }
     return state;
   }
@@ -1233,14 +1280,47 @@
     renderResult(day, state);
     renderChallenge(state);
     startChallengeFlow(state);
+    maybeShowLuckyReveal(state);
+  }
+
+  // Briefly shows today's two lucky numbers large, once per calendar day
+  // (per mode), right when the day is first opened.
+  const LUCKY_REVEAL_KEY = "weeklySecret_luckyRevealSeen";
+  function loadLuckyRevealSeen(){
+    try{ return JSON.parse(localStorage.getItem(LUCKY_REVEAL_KEY) || "{}"); }
+    catch(e){ return {}; }
+  }
+  function markLuckyRevealSeen(key){
+    const seen = loadLuckyRevealSeen();
+    seen[key] = true;
+    try{ localStorage.setItem(LUCKY_REVEAL_KEY, JSON.stringify(seen)); } catch(e){}
+  }
+  function showLuckyReveal(pair){
+    const overlay = document.createElement("div");
+    overlay.className = "lucky-reveal";
+    overlay.innerHTML = `
+      <div class="lucky-reveal-inner">
+        <div class="lucky-reveal-label">${t("luckyRevealLabel")}</div>
+        <div class="lucky-reveal-numbers">
+          <span class="num-chip hero">${pair[0]}</span>
+          <span class="num-chip hero">${pair[1]}</span>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    setTimeout(() => { overlay.remove(); }, 2200);
+  }
+  function maybeShowLuckyReveal(state){
+    if (!state || !currentMode) return;
+    const key = `${currentMode}:${currentTodayKey()}`;
+    const seen = loadLuckyRevealSeen();
+    if (seen[key]) return;
+    markLuckyRevealSeen(key);
+    showLuckyReveal(state.luckyPair);
   }
 
   function renderResult(day, state){
     const panel = document.getElementById("resultPanel");
     const isLucky = state.isLucky;
-    const hintText = state.hasDouble
-      ? t("twoNumbersMatch")
-      : `${t("luckyNumbersForPrefix")} ${dayLabel(day.key)}: ${state.luckyPair.join(" & ")} ${t("allOthersUnlucky")}`;
     panel.innerHTML = `
       <div class="status-row">
         <span class="status-badge ${isLucky ? "lucky" : "unlucky"}">${isLucky ? "Lucky" : "Unlucky"}</span>
@@ -1250,7 +1330,6 @@
         <div class="num-chip">${state.n2}</div>
         <div class="num-chip">${state.n3}</div>
       </div>
-      <div class="hint">${hintText}</div>
       <button class="reroll" id="rerollBtn">${t("reroll")}</button>
     `;
     document.getElementById("rerollBtn").addEventListener("click", reroll);
@@ -1370,7 +1449,14 @@
     clearChallengeTimerInterval();
     hideAllFlowBlocks();
     activeChallengeEntry = null;
-    if (!state || state.isLucky){ timerState = null; return; }
+    if (!state || state.isLucky){
+      timerState = null;
+      // Lucky roll → no challenge, so auto-mark today's calendar as Done.
+      if (state && state.isLucky && !calMarks[currentTodayKey()]){
+        setTodayMark("D");
+      }
+      return;
+    }
     if (calMarks[currentTodayKey()]){ timerState = null; return; }
 
     const up = upIndex(state);
@@ -1379,8 +1465,21 @@
     activeChallengeEntry = entry;
 
     document.getElementById("challengeFlowPanel").style.display = "block";
+    document.getElementById("timerValue").classList.remove("secret-timer");
 
-    if (entry.category !== null && entry.min !== undefined){
+    if (currentMode === "weekly"){
+      // Weekly Secret: the random 1-8h length runs as a timer, just like the
+      // other modes' timed challenges — only bigger — and Done/Fail/X only
+      // appears once it has run out.
+      const todayKey = currentTodayKey();
+      const totalSeconds = state.secretHours * 3600;
+      if (!(timerState && timerState.dateKey === todayKey && timerState.total === totalSeconds)){
+        timerState = { dateKey: todayKey, total: totalSeconds, remaining: totalSeconds, running: false, lastTimestamp: null };
+      }
+      document.getElementById("challengeTimerBlock").hidden = false;
+      document.getElementById("timerValue").classList.add("secret-timer");
+      renderTimerDisplay();
+    } else if (entry.category !== null && entry.min !== undefined){
       document.getElementById("countValue").textContent = entry.rolledCount;
       document.getElementById("challengeCountBlock").hidden = false;
     } else if (entry.category !== null && entry.minSeconds !== undefined){
@@ -1609,9 +1708,9 @@
   // ---- Persistence (this browser / this device only) ----
   // Each mode is stored completely independently under its own key.
   const MODES = {
-    weekly: { label: { en:"Weekly Secret", de:"Weekly Secret" }, subtitle: { en:"Are you lucky today?", de:"Bist du heute im Glück?" }, storageKey: "weeklySecret_v1", abbr: "WS", challenges: CHALLENGES_WEEKLY },
+    weekly: { label: { en:"Weekly Secret", de:"Weekly Secret" }, subtitle: { en:"Are you lucky today?", de:"Hast du heute Glück?" }, storageKey: "weeklySecret_v1", abbr: "WS", challenges: CHALLENGES_WEEKLY },
     b1:     { label: { en:"Oral Training", de:"Oral Training" }, subtitle: { en:"Mmmph~", de:"Mmmpf~" }, storageKey: "weeklySecret_v1_b1", abbr: "OT", categories: CHALLENGES_B1 },
-    b2:     { label: { en:"Anal Training", de:"Anal Training" }, subtitle: { en:"Train hard", de:"Hart trainieren" }, storageKey: "weeklySecret_v1_b2", abbr: "AT", categories: CHALLENGES_B2 },
+    b2:     { label: { en:"Anal Training", de:"Anal Training" }, subtitle: { en:"Train hard", de:"Tief trainieren" }, storageKey: "weeklySecret_v1_b2", abbr: "AT", categories: CHALLENGES_B2 },
   };
   let currentMode = null;
   let currentStorageKey = MODES.weekly.storageKey;
@@ -1998,7 +2097,7 @@
   const THEMES = {
     flowers: { name: { en:"Flowers", de:"Blumen" }, emoji: "🌸" },
     ocean:   { name: { en:"Ocean",   de:"Ozean"  }, emoji: "🐳" },
-    honey:   { name: { en:"Honey",   de:"Honig"  }, emoji: "🍯" },
+    honey:   { name: { en:"Honey",   de:"Süß"  }, emoji: "🍯" },
   };
   const THEME_KEY = "weeklySecret_theme";
   let currentTheme = "flowers";
