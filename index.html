@@ -312,6 +312,25 @@
   .mark-btn.mark-done{ background: var(--mark-d); }
   .mark-btn.mark-fail{ background: var(--mark-f); }
   .mark-btn.mark-x{ background: var(--mark-x); }
+  .mark-btn:disabled{ background:#c9c9c9 !important; color:#f4f4f4; cursor:not-allowed; opacity:0.7; transform:none; }
+
+  /* Message center */
+  #headerEmoji{ pointer-events:auto; cursor:pointer; }
+  .msg-badge{
+    position:absolute; left:14px; top:-12px;
+    min-width:18px; height:18px; padding:0 5px; box-sizing:border-box;
+    border-radius:999px; background:var(--accent); color:#fff;
+    font-size:11px; font-weight:700; line-height:18px; text-align:center;
+    pointer-events:none; user-select:none;
+  }
+  .msg-item{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.06);
+    font-size: var(--fs-text); color: var(--ink);
+  }
+  .msg-item:last-child{ border-bottom:none; }
+  .msg-item .mark-btn-row{ gap:6px; }
+  .msg-item .mark-btn{ padding:6px 14px; }
 
   /* Calendar */
   .cal-header{
@@ -819,7 +838,8 @@
   <div id="mainScreen" hidden>
 
   <header>
-    <span class="flower" id="headerEmoji" style="left:-6px; top:-6px;">🌸</span>
+    <span class="flower" id="headerEmoji" role="button" tabindex="0" aria-label="Messages" aria-expanded="false" aria-controls="messagesPanel" style="left:-6px; top:-6px;">🌸</span>
+    <span class="msg-badge" id="msgBadge" hidden></span>
     <button class="settings-btn" id="settingsBtn" type="button" aria-label="Settings" aria-expanded="false" aria-controls="settingsPanel">⚙️</button>
     <h1 id="appTitle">Weekly Secret</h1>
     <div class="subtitle" id="appSubtitle">Are you lucky today?</div>
@@ -861,6 +881,13 @@
           <div class="cal-challenge-panel" id="ovList"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="panel" id="messagesPanel" hidden>
+    <div class="panel-inner">
+      <div class="calendar-title"><span class="t-en">Messages</span><span class="t-de" hidden>Nachrichten</span></div>
+      <div id="messagesList"></div>
     </div>
   </div>
 
@@ -1366,6 +1393,14 @@
     if (timerTickInterval){ clearInterval(timerTickInterval); timerTickInterval = null; }
   }
 
+  // While a timer is still running, the D/F/X overlay is shown too, but
+  // D and F stay greyed out and unclickable until the timer reaches 0.
+  function setDoneLocked(locked){
+    document.querySelectorAll("#challengeDoneBlock .mark-btn").forEach(b => {
+      if (b.dataset.mark === "D" || b.dataset.mark === "F") b.disabled = locked;
+    });
+  }
+
   function hideAllFlowBlocks(){
     document.getElementById("challengeCountBlock").hidden = true;
     document.getElementById("challengeTimerBlock").hidden = true;
@@ -1404,6 +1439,8 @@
       finishTimer();
       return;
     }
+    setDoneLocked(true);
+    document.getElementById("challengeDoneBlock").hidden = false;
     const btn = document.getElementById("startTimerBtn");
     btn.disabled = false;
     btn.textContent = timerState.running
@@ -1424,6 +1461,7 @@
     saveState();
     document.getElementById("timerValue").textContent = "00:00";
     document.getElementById("challengeTimerBlock").hidden = true;
+    setDoneLocked(false);
     document.getElementById("challengeDoneBlock").hidden = false;
   }
 
@@ -1448,6 +1486,7 @@
   function startChallengeFlow(state){
     clearChallengeTimerInterval();
     hideAllFlowBlocks();
+    setDoneLocked(false);
     activeChallengeEntry = null;
     if (!state || state.isLucky){
       timerState = null;
@@ -1513,7 +1552,9 @@
   // Marks today in the current mode's calendar. This remains the only way
   // to mark the calendar — tapping calendar cells directly stays disabled.
   function setTodayMark(mark){
-    const key = currentTodayKey();
+    markDay(currentTodayKey(), mark);
+  }
+  function markDay(key, mark){
     calMarks[key] = mark;
     calChallenges[key] = challengeLabelForDateKey(key);
     renderCalendar();
@@ -1560,6 +1601,7 @@
 
   // ---- Counter ----
   let COUNTER_START = 15;
+  let challengeStart = null; // "YYYY-MM-DD" of the first day of the current challenge
   let rerollPenalty = 0;   // +1 day on the counter per reroll (reset with a new challenge)
   const rerollCounts = {}; // "YYYY-MM-DD" -> number of rerolls used that day
   const MAX_REROLLS_PER_DAY = 2;
@@ -1600,7 +1642,73 @@
     startCounterReveal(currentMode, true);
   });
 
+  // ---- Message center: unmarked days between start and end of the challenge ----
+  function missedDayKeys(){
+    if (!challengeStart || computeCounter() <= 0) return [];
+    const keys = [];
+    const [sy, sm, sd] = challengeStart.split("-").map(Number);
+    const cur = new Date(sy, sm - 1, sd);
+    const todayKey = currentTodayKey();
+    let guard = 0;
+    while (guard++ < 400){
+      const key = dateKey(cur.getFullYear(), cur.getMonth(), cur.getDate());
+      if (key >= todayKey) break; // today is handled by the normal challenge flow
+      if (!calMarks[key]) keys.push(key);
+      cur.setDate(cur.getDate() + 1);
+    }
+    return keys;
+  }
+
+  function updateMessageBadge(){
+    const badge = document.getElementById("msgBadge");
+    if (!badge) return;
+    const n = missedDayKeys().length;
+    badge.textContent = n > 99 ? "99+" : String(n);
+    badge.hidden = n === 0;
+  }
+
+  function renderMessages(){
+    const list = document.getElementById("messagesList");
+    list.innerHTML = "";
+    const keys = missedDayKeys();
+    if (keys.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = currentLang === "de" ? "Keine neuen Nachrichten ✨" : "No new messages ✨";
+      list.appendChild(empty);
+      return;
+    }
+    keys.forEach(key => {
+      const [y, m, d] = key.split("-").map(Number);
+      const dayDef = DAY_BY_JSIDX[new Date(y, m - 1, d).getDay()];
+      const dateLabel = `${d}. ${monthNames()[m-1].slice(0,3)}` + (dayDef ? ` (${dayLabel(dayDef.key)})` : "");
+      const item = document.createElement("div");
+      item.className = "msg-item";
+      const text = document.createElement("span");
+      text.innerHTML = currentLang === "de"
+        ? `Du hast den <b>${dateLabel}</b> nicht markiert.`
+        : `You haven't marked <b>${dateLabel}</b>.`;
+      const row = document.createElement("div");
+      row.className = "mark-btn-row";
+      [["D","mark-done"],["F","mark-fail"],["X","mark-x"]].forEach(([mark, cls]) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "mark-btn " + cls;
+        b.textContent = mark;
+        b.addEventListener("click", () => {
+          markDay(key, mark);
+          renderMessages();
+        });
+        row.appendChild(b);
+      });
+      item.appendChild(text);
+      item.appendChild(row);
+      list.appendChild(item);
+    });
+  }
+
   function renderCounter(){
+    updateMessageBadge();
     const value = computeCounter();
     refreshRerollButton();
     const wrap = document.getElementById("counterWrap");
@@ -1717,7 +1825,7 @@
 
   function saveState(){
     try{
-      const payload = { dayStates, currentDay, calMarks, calChallenges, calChallengesOpen, counterStart: COUNTER_START, timerState, rerollCounts, rerollPenalty };
+      const payload = { dayStates, currentDay, calMarks, calChallenges, calChallengesOpen, counterStart: COUNTER_START, challengeStart, timerState, rerollCounts, rerollPenalty };
       localStorage.setItem(currentStorageKey, JSON.stringify(payload));
     } catch (e){
       // storage unavailable (private mode, quota, etc.) — app still works, just won't persist
@@ -1744,6 +1852,7 @@
     calChallengesOpen = true;
     COUNTER_START = 15;
     rerollPenalty = 0;
+    challengeStart = null;
     Object.keys(rerollCounts).forEach(k => delete rerollCounts[k]);
     timerState = null;
   }
@@ -1780,6 +1889,13 @@
       COUNTER_START = saved.counterStart;
     } else if (typeof forcedCounterStart === "number") {
       COUNTER_START = forcedCounterStart;
+    }
+
+    if (saved && typeof saved.challengeStart === "string"){
+      challengeStart = saved.challengeStart;
+    } else {
+      const markedKeys = Object.keys(calMarks).sort();
+      challengeStart = markedKeys.length ? markedKeys[0] : currentTodayKey();
     }
 
     const todayKey = currentTodayKey();
@@ -1855,6 +1971,7 @@
       // start over: new length, empty calendar, no reroll penalty
       COUNTER_START = pendingRevealValue;
       rerollPenalty = 0;
+      challengeStart = currentTodayKey();
       Object.keys(calMarks).forEach(k => delete calMarks[k]);
       Object.keys(calChallenges).forEach(k => delete calChallenges[k]);
       saveState();
@@ -1882,6 +1999,7 @@
   function goToModeSelect(){
     clearChallengeTimerInterval();
     saveState();
+    document.getElementById("messagesPanel").hidden = true;
     const sp = document.getElementById("settingsPanel");
     if (sp) sp.hidden = true;
     document.getElementById("settingsBtn").setAttribute("aria-expanded", "false");
@@ -2138,6 +2256,19 @@
     const willOpen = settingsPanel.hidden;
     settingsPanel.hidden = !willOpen;
     settingsBtn.setAttribute("aria-expanded", String(willOpen));
+  });
+
+  const headerEmojiBtn = document.getElementById("headerEmoji");
+  const messagesPanel = document.getElementById("messagesPanel");
+  function toggleMessages(){
+    const willOpen = messagesPanel.hidden;
+    if (willOpen) renderMessages();
+    messagesPanel.hidden = !willOpen;
+    headerEmojiBtn.setAttribute("aria-expanded", String(willOpen));
+  }
+  headerEmojiBtn.addEventListener("click", toggleMessages);
+  headerEmojiBtn.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " "){ e.preventDefault(); toggleMessages(); }
   });
 
   // ---- Persist the running timer if the tab/browser is closed or hidden ----
